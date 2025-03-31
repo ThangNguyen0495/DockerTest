@@ -37,22 +37,22 @@ ENV ANDROID_HOME=/root/android-sdk
 ENV ANDROID_SDK_ROOT=/root/android-sdk
 ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 
-# Install Android SDK and emulator
+# Download Android command-line tools
 RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
-    && wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip \
-    && unzip cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools/latest \
-    && rm cmdline-tools.zip
+    && cd $ANDROID_HOME/cmdline-tools/latest \
+    && wget -q https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip \
+    && unzip commandlinetools-linux-10406996_latest.zip \
+    && rm commandlinetools-linux-10406996_latest.zip
 
-# Update PATH for SDK tools
-ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+# Ensure correct directory structure
+RUN mv $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ \
+    && rm -rf $ANDROID_HOME/cmdline-tools/latest/cmdline-tools
 
-RUN ls -R $ANDROID_HOME
-
-# Accept Android SDK licenses
-RUN yes | $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin/sdkmanager --licenses || true
+# Accept SDK licenses
+RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
 # Install necessary SDK tools
-RUN $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin/sdkmanager \
+RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
               "platform-tools" \
               "platforms;android-35" \
               "build-tools;35.0.0" \
@@ -60,7 +60,7 @@ RUN $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin/sdkmanager \
               "emulator"
 
 # Create an AVD (Android Virtual Device)
-RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
+RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
 # Expose necessary ports for ADB
 EXPOSE 5555
