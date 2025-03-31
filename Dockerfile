@@ -1,5 +1,5 @@
-# Use OpenJDK as the base image
-FROM openjdk:22
+# Use OpenJDK 22 with a Debian base image (for apt-get support)
+FROM eclipse-temurin:22-jdk-bookworm
 
 # Set environment variables
 ENV ANDROID_HOME=/root/android-sdk
@@ -18,14 +18,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Android SDK and emulator
-RUN mkdir -p $ANDROID_HOME
-WORKDIR $ANDROID_HOME
-
-RUN wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip \
-    && unzip cmdline-tools.zip -d cmdline-tools \
+RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
+    && wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip \
+    && unzip cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools/latest \
     && rm cmdline-tools.zip
 
-ENV PATH=$ANDROID_HOME/cmdline-tools/bin:$PATH
+# Update PATH for SDK tools
+ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
 
 # Accept Android SDK licenses
 RUN yes | sdkmanager --licenses
@@ -43,4 +42,4 @@ EXPOSE 5900
 # Start Emulator when container runs
 CMD \
     $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
-    sleep 10 && adb wait-for-device && adb devices && tail -f /dev/null
+    sleep 30 && adb devices && tail -f /dev/null
