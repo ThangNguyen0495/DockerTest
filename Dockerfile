@@ -40,9 +40,9 @@ ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$AND
 # Download Android command-line tools
 RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
     && cd $ANDROID_HOME/cmdline-tools/latest \
-    && wget -q https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip \
-    && unzip commandlinetools-linux-10406996_latest.zip \
-    && rm commandlinetools-linux-10406996_latest.zip
+    && wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip \
+    && unzip commandlinetools.zip \
+    && rm commandlinetools.zip
 
 # Ensure correct directory structure
 RUN mv $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ \
