@@ -1,5 +1,5 @@
 # Use OpenJDK 22 with a Debian base image (for apt-get support)
-FROM eclipse-temurin:22-jdk-bookworm
+FROM eclipse-temurin:22-jdk
 
 # Set environment variables
 ENV ANDROID_HOME=/root/android-sdk
