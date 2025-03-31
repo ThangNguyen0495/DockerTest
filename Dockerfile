@@ -24,7 +24,7 @@ RUN wget -O /tmp/jdk.tar.gz https://github.com/adoptium/temurin22-binaries/relea
     && rm /tmp/jdk.tar.gz
 
 # Set Java environment variables
-ENV JAVA_HOME=/usr/bin/java
+ENV JAVA_HOME=/usr
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
 RUN which java
