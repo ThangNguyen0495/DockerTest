@@ -34,7 +34,7 @@ RUN ls -R $ANDROID_HOME/cmdline-tools/
 RUN yes | $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin/sdkmanager --licenses || true
 
 # Install necessary SDK tools
-RUN $ANDROID_HOME/cmdline-tools/latest/bin/cmdline-tools/sdkmanager \
+RUN $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin/sdkmanager \
               "platform-tools" \
               "platforms;android-35" \
               "build-tools;35.0.0" \
