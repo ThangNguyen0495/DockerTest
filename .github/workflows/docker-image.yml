@@ -1,0 +1,36 @@
+name: Run Android Emulator in Docker
+
+on: [push, pull_request]
+
+jobs:
+  run-docker:
+    runs-on: ubuntu-latest  # GitHub provides Ubuntu runners with Docker support
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (for ARM-based emulators, if needed)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-kvm
+
+      - name: Build Docker Image
+        run: |
+          docker build -t android-emulator .
+
+      - name: Start Docker Container
+        run: |
+          docker run -d --name emulator-container --privileged \
+            -p 5555:5555 -p 5037:5037 -p 4723:4723 \
+            android-emulator
+
+      - name: Wait for Emulator to Start
+        run: |
+          sleep 60  # Wait for the emulator to boot up
+          docker logs emulator-container
+
+      - name: Check ADB Devices
+        run: |
+          docker exec emulator-container adb devices
