@@ -23,10 +23,12 @@ RUN apt-get update --fix-missing && apt-get install -y \
 RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
     && wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip \
     && unzip cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools/latest \
-    && rm cmdline-tools.zip
+    && rm cmdline-tools.zip \
 
 # Update PATH for SDK tools
 ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+
+RUN ls -R $ANDROID_HOME/cmdline-tools/
 
 # Accept Android SDK licenses
 RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
