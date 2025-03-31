@@ -38,11 +38,11 @@ ENV ANDROID_SDK_ROOT=/root/android-sdk
 ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 
 # Download Android command-line tools
-RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
-    && cd $ANDROID_HOME/cmdline-tools/latest \
-    && wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip \
-    && unzip commandlinetools.zip \
-    && rm commandlinetools.zip
+WORKDIR $ANDROID_HOME/cmdline-tools/latest
+RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O cmdline-tools.zip \
+    && unzip cmdline-tools.zip \
+    && rm cmdline-tools.zip \
+    && mv cmdline-tools tools
 
 # Ensure correct directory structure
 RUN mv $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ \
