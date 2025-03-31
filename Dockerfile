@@ -32,7 +32,12 @@ ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PA
 RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
 # Install necessary SDK tools
-RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-35" "system-images;android-35;google_apis;x86_64" "emulator"
+RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+              "platform-tools" \
+              "platforms;android-35" \
+              "build-tools;35.0.0" \
+              "system-images;android-35;google_apis;x86_64" \
+              "emulator"
 
 # Create an AVD (Android Virtual Device)
 RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
