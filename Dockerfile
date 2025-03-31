@@ -27,8 +27,6 @@ RUN wget -O /tmp/jdk.tar.gz https://github.com/adoptium/temurin22-binaries/relea
 ENV JAVA_HOME=/usr
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
-RUN which java
-
 # Verify Java installation
 RUN java -version
 
@@ -45,8 +43,9 @@ RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512
     && mv cmdline-tools tools
 
 # Ensure correct directory structure
-RUN mv $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ \
-    && rm -rf $ANDROID_HOME/cmdline-tools/latest/cmdline-tools
+#RUN mv $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ \
+#    && rm -rf $ANDROID_HOME/cmdline-tools/latest/cmdline-tools
+RUN ls -R $ANDROID_HOME
 
 # Accept SDK licenses
 RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
