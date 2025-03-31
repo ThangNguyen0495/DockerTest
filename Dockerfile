@@ -27,6 +27,8 @@ RUN wget -O /tmp/jdk.tar.gz https://github.com/adoptium/temurin22-binaries/relea
 ENV JAVA_HOME=/opt/jdk
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
+RUN ls -R $JAVA_HOME
+
 # Verify Java installation
 RUN java -version
 
