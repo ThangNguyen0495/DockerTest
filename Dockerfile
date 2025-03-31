@@ -31,10 +31,10 @@ ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PA
 RUN ls -R $ANDROID_HOME/cmdline-tools/
 
 # Accept Android SDK licenses
-RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+RUN yes | $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin/sdkmanager --licenses || true
 
 # Install necessary SDK tools
-RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+RUN $ANDROID_HOME/cmdline-tools/latest/bin/cmdline-tools/sdkmanager \
               "platform-tools" \
               "platforms;android-35" \
               "build-tools;35.0.0" \
@@ -42,7 +42,7 @@ RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
               "emulator"
 
 # Create an AVD (Android Virtual Device)
-RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
+RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
 # Expose necessary ports for ADB
 EXPOSE 5555
