@@ -17,11 +17,6 @@ RUN apt-get update --fix-missing && apt-get install -y \
     libgl1-mesa-dri \
     && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size \
 
-
-# Set environment variables
-ENV ANDROID_HOME=/root/android-sdk
-ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
-
 # Install Eclipse Temurin JDK 22
 RUN wget -O /tmp/jdk.tar.gz https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz \
     && mkdir -p /opt/jdk \
