@@ -1,5 +1,21 @@
-# Use OpenJDK 22 with a Debian base image (for apt-get support)
-FROM eclipse-temurin:22-jdk
+# Use a stable base image (Ubuntu 22.04 - Jammy)
+FROM ubuntu:22.04
+
+# Set non-interactive mode to avoid interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Eclipse Temurin JDK 22
+RUN wget -O /tmp/jdk.tar.gz https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz \
+    && mkdir -p /opt/jdk \
+    && tar -xzf /tmp/jdk.tar.gz -C /opt/jdk --strip-components=1 \
+    && rm /tmp/jdk.tar.gz
+
+# Set Java environment variables
+ENV JAVA_HOME=/opt/jdk
+ENV PATH="$JAVA_HOME/bin:$PATH"
+
+# Verify Java installation
+RUN java -version
 
 # Set environment variables
 ENV ANDROID_HOME=/root/android-sdk
