@@ -6,16 +6,10 @@ ENV ANDROID_HOME=/root/android-sdk
 ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    curl \
-    git \
-    sudo \
-    maven \
-    libgl1-mesa-glx \
-    libgl1-mesa-dri \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* \
+    && apt-get update --fix-missing \
+    && apt-get install -y wget unzip curl git sudo maven libgl1-mesa-glx libgl1-mesa-dri
+
 
 # Install Android SDK and emulator
 RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
