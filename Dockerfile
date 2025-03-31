@@ -35,6 +35,9 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 # Verify Java installation
 RUN java -version
 
+# Set environment variables
+ENV ANDROID_HOME=/root/android-sdk
+ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 
 # Install Android SDK and emulator
 RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
@@ -45,7 +48,7 @@ RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
 # Update PATH for SDK tools
 ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
 
-RUN ls -R $ANDROID_HOME/cmdline-tools/
+RUN ls -R $ANDROID_HOME
 
 # Accept Android SDK licenses
 RUN yes | $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/bin/sdkmanager --licenses || true
