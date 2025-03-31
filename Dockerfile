@@ -50,10 +50,10 @@ RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512
 RUN ls -R $ANDROID_HOME
 
 # Accept SDK licenses
-RUN yes | sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
+RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
 
 # Install necessary SDK tools
-RUN sdkmanager --sdk_root=$ANDROID_HOME \
+RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
     "platform-tools" \
     "platforms;android-35" \
     "build-tools;35.0.0" \
@@ -61,7 +61,7 @@ RUN sdkmanager --sdk_root=$ANDROID_HOME \
     "emulator"
 
 # Create an AVD (Android Virtual Device)
-RUN echo "no" | avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
+RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
 # Expose necessary ports for ADB
 EXPOSE 5555
