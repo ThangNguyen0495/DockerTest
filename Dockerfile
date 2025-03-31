@@ -34,7 +34,7 @@ RUN java -version
 
 # Set environment variables
 ENV ANDROID_HOME=/root/android-sdk
-ENV ANDROID_SDK_ROOT=$ANDROID_HOME
+ENV ANDROID_SDK_ROOT=/root/android-sdk
 ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 
 # Install Android SDK and emulator
