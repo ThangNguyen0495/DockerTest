@@ -3,39 +3,35 @@ FROM eclipse-temurin:22-jdk
 
 # Set environment variables
 ENV ANDROID_HOME=/root/android-sdk
-ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+ENV CMDLINE_TOOLS=$ANDROID_HOME/cmdline-tools/latest
+ENV PATH=$CMDLINE_TOOLS/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH
 
 # Install dependencies
-RUN apt-get update --fix-missing && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     wget \
     unzip \
     curl \
     git \
     sudo \
     maven \
-    libgl1 \
-    mesa-utils \
+    libgl1-mesa-glx \
     libgl1-mesa-dri \
-    && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size
+    && rm -rf /var/lib/apt/lists/*
 
-
-# Install Android SDK and emulator
-RUN mkdir -p $ANDROID_HOME/cmdline-tools/latest \
+# Install Android SDK command-line tools
+RUN mkdir -p $CMDLINE_TOOLS \
     && wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip \
-    && unzip cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools/latest \
+    && unzip cmdline-tools.zip -d $CMDLINE_TOOLS \
     && rm cmdline-tools.zip
 
-# Update PATH for SDK tools
-ENV PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
-
 # Accept Android SDK licenses
-RUN yes | sdkmanager --licenses
+RUN yes | $CMDLINE_TOOLS/bin/sdkmanager --licenses
 
 # Install necessary SDK tools
-RUN sdkmanager "platform-tools" "platforms;android-35" "system-images;android-35;google_apis;x86_64" "emulator"
+RUN $CMDLINE_TOOLS/bin/sdkmanager "platform-tools" "platforms;android-35" "system-images;android-35;google_apis;x86_64" "emulator"
 
 # Create an AVD (Android Virtual Device)
-RUN echo "no" | avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
+RUN echo "no" | $CMDLINE_TOOLS/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
 # Expose necessary ports for ADB
 EXPOSE 5555
