@@ -45,8 +45,6 @@ RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512
     && rm -rf cmdline-tools
 
 # Ensure correct directory structure
-#RUN mv $ANDROID_HOME/cmdline-tools/latest/cmdline-tools/* $ANDROID_HOME/cmdline-tools/latest/ \
-#    && rm -rf $ANDROID_HOME/cmdline-tools/latest/cmdline-tools
 RUN ls -R $ANDROID_HOME
 
 # Accept SDK licenses
