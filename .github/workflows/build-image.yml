@@ -36,11 +36,10 @@ jobs:
         run: |
           docker run -d --name emulator-container --privileged thangnguyen0495/android-emulator:latest
 
-      - name: Wait for Emulator to Start
-        run: |
-          sleep 60  # Wait for the emulator to boot up
-          docker logs emulator-container
-
       - name: Check ADB Devices
         run: |
-          docker exec emulator-container adb devices
+          for i in {1..10}; do
+            docker exec emulator-container adb devices && break
+            echo "Waiting for ADB to be ready..."
+            sleep 10
+          done
