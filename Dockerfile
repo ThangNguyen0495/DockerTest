@@ -77,13 +77,13 @@ CMD $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshad
     tail -f /dev/null
 CMD adb devices
 
-# Install Node.js v20 & npm
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
-
-# Install Appium globally
-RUN npm install -g appium && appium driver install uiautomator2
-
-# Start Appium
-CMD nohup appium -a 0.0.0.0 -p 4723 -pa /wd/hub > appium_log.txt 2>&1 & \
-    tail -f appium_log.txt
+## Install Node.js v20 & npm
+#RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+#    apt-get install -y nodejs
+#
+## Install Appium globally
+#RUN npm install -g appium && appium driver install uiautomator2
+#
+## Start Appium
+#CMD nohup appium -a 0.0.0.0 -p 4723 -pa /wd/hub > appium_log.txt 2>&1 & \
+#    tail -f appium_log.txt
