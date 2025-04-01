@@ -31,7 +31,7 @@ jobs:
           docker buildx build \
             --cache-from=type=local,src=/tmp/.buildx-cache \
             --cache-to=type=local,dest=/tmp/.buildx-cache \
-            -t thangnguyen0495/android-emulator:latest
+            -t thangnguyen0495/android-emulator:latest .
 
       # 🔹 Run the Container
       - name: Start Docker Container
