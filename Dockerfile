@@ -16,7 +16,6 @@ RUN apt-get update --fix-missing && apt-get install -y \
     mesa-utils \
     libgl1-mesa-dri \
     && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size \
-RUN sudo apt-get install -y qemu-kvm
 
 # Install Eclipse Temurin JDK 22
 RUN wget -O /tmp/jdk.tar.gz https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz \
@@ -62,20 +61,13 @@ RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
 # Create an AVD (Android Virtual Device)
 RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
-# Expose necessary ports for ADB & Appium
-EXPOSE 5555 5900 4723
+# Expose necessary ports for ADB
+EXPOSE 5555
+EXPOSE 5900
 
 # Start Emulator when container runs
-CMD $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
-    sleep 10 && \
-    until $ANDROID_HOME/platform-tools/adb shell getprop sys.boot_completed | grep -m 1 "1"; do \
-      echo "Waiting for emulator to boot..."; \
-      sleep 5; \
-    done; \
-    echo "Emulator has booted!"; \
-    $ANDROID_HOME/platform-tools/adb devices; \
-    tail -f /dev/null
-CMD adb devices
+CMD \
+    $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
 
 # Install Node.js v20 & npm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
@@ -85,5 +77,4 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
 RUN npm install -g appium && appium driver install uiautomator2
 
 # Start Appium
-CMD nohup appium -a 0.0.0.0 -p 4723 -pa /wd/hub > appium_log.txt 2>&1 & \
-    tail -f appium_log.txt
+CMD nohup appium -a 0.0.0.0 -p 4723 -pa /wd/hub

@@ -1,4 +1,4 @@
-name: Run Android Emulator in Docker
+name: Build docker
 
 on: [push, pull_request]
 
