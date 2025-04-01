@@ -43,12 +43,15 @@ jobs:
       - name: Start Docker Container
         run: |
           docker run -d --name emulator-container --privileged \
-            -p 5555:5555 -p 5037:5037 -p 4723:4723 \
             android-emulator
       - name: Wait for Emulator to Start
         run: |
           sleep 60  # Wait for the emulator to boot up
           docker logs emulator-container
+      - name: Check if Emulator Container is Running
+        run: |
+          docker ps -a
+
       - name: Check ADB Devices
         run: |
           docker exec emulator-container adb devices
