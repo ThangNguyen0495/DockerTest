@@ -1,3 +1,4 @@
+
 name: Run Android Emulator in Docker
 
 on: [push, pull_request]
@@ -11,39 +12,35 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up QEMU (for ARM-based emulators, if needed)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y qemu-kvm
-
       # 🔹 Set up Docker Buildx for multi-platform builds
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 🔹 Log in to DockerHub (Ensure secrets are set up in GitHub)
-      - name: Log in to DockerHub
-        uses: docker/login-action@v3
+      # 🔹 Cache Docker Layers for Faster Builds
+      - name: Cache Docker layers
+        uses: actions/cache@v4
         with:
-          username: ${{ secrets.DOCKER_ACCOUNT }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
 
-      # 🔹 Build and Push Docker Image
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true  # Change to `false` if you only want to build locally
-          tags: thangnguyen0495/android-emulator:latest
+      # 🔹 Build and Push Docker Image with Cache
+      - name: Build Docker Image
+        run: |
+          docker buildx build \
+            --cache-from=type=local,src=/tmp/.buildx-cache \
+            --cache-to=type=local,dest=/tmp/.buildx-cache \
+            -t thangnguyen0495/android-appium-test:latest
 
-      # 🔹 Pull & Run the Image
+      # 🔹 Run the Container
       - name: Start Docker Container
         run: |
-          docker run -d --name emulator-container --privileged thangnguyen0495/android-emulator:latest
+          docker run -d --name emulator-container --privileged \
+            thangnguyen0495/android-emulator:latest
 
       - name: Wait for Emulator to Start
         run: |
-          sleep 60  # Wait for the emulator to boot up
           docker logs emulator-container
 
       - name: Check ADB Devices
