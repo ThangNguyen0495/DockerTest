@@ -42,7 +42,7 @@ jobs:
 
       - name: Start Docker Container
         run: |
-          docker run -d --name emulator-container --privileged emulator-image
+          docker run -d --name emulator-container --privileged -p 5555:5555 -p 5037:5037 -p 4723:4723 emulator-image
 
       - name: Wait for Emulator to Start
         run: |
