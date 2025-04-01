@@ -16,6 +16,7 @@ RUN apt-get update --fix-missing && apt-get install -y \
     mesa-utils \
     libgl1-mesa-dri \
     && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size \
+RUN sudo apt-get install -y qemu-kvm
 
 # Install Eclipse Temurin JDK 22
 RUN wget -O /tmp/jdk.tar.gz https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz \
@@ -61,11 +62,24 @@ RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
 # Create an AVD (Android Virtual Device)
 RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
-# Expose necessary ports for ADB
-EXPOSE 5555
-EXPOSE 5900
-
 # Start Emulator when container runs
-CMD \
-    $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
-    sleep 30 && adb devices && tail -f /dev/null
+CMD $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
+    sleep 5; \
+    boot_completed=""; \
+    while [ "$boot_completed" != "1" ]; do \
+      sleep 5; \
+      boot_completed=$($ANDROID_HOME/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed || true); \
+      echo "Waiting for emulator to boot..."; \
+    done; \
+    echo "Emulator has booted!"; \
+    $ANDROID_HOME/platform-tools/adb -s emulator-5554 shell input keyevent 82 || true; \
+    echo "Unlocking emulator..."; \
+    adb -P 5037 -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps; \
+    adb -P 5037 -s emulator-5554 shell settings delete global hidden_api_policy_p_apps; \
+    adb -P 5037 -s emulator-5554 shell settings delete global hidden_api_policy; \
+    adb -P 5037 -s emulator-5554 shell settings put global window_animation_scale 0; \
+    adb -P 5037 -s emulator-5554 shell settings put global transition_animation_scale 0; \
+    adb -P 5037 -s emulator-5554 shell settings put global animator_duration_scale 0; \
+    echo "Configuration Completed."; \
+    $ANDROID_HOME/platform-tools/adb devices; \
+    tail -f /dev/null
