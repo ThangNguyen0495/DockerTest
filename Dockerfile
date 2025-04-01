@@ -68,25 +68,15 @@ EXPOSE 5555
 
 # Start Emulator when container runs
 CMD $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
-    sleep 5; \
-    boot_completed=""; \
-    while [ "$boot_completed" != "1" ]; do \
-      sleep 5; \
-      boot_completed=$($ANDROID_HOME/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed || true); \
+    sleep 10 && \
+    until $ANDROID_HOME/platform-tools/adb shell getprop sys.boot_completed | grep -m 1 "1"; do \
       echo "Waiting for emulator to boot..."; \
+      sleep 5; \
     done; \
     echo "Emulator has booted!"; \
-    $ANDROID_HOME/platform-tools/adb -s emulator-5554 shell input keyevent 82 || true; \
-    echo "Unlocking emulator..."; \
-    adb -P 5037 -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps; \
-    adb -P 5037 -s emulator-5554 shell settings delete global hidden_api_policy_p_apps; \
-    adb -P 5037 -s emulator-5554 shell settings delete global hidden_api_policy; \
-    adb -P 5037 -s emulator-5554 shell settings put global window_animation_scale 0; \
-    adb -P 5037 -s emulator-5554 shell settings put global transition_animation_scale 0; \
-    adb -P 5037 -s emulator-5554 shell settings put global animator_duration_scale 0; \
-    echo "Configuration Completed."; \
     $ANDROID_HOME/platform-tools/adb devices; \
     tail -f /dev/null
+CMD adb devices
 
 # Install Node.js v20 & npm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
