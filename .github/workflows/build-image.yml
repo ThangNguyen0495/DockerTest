@@ -38,19 +38,19 @@ jobs:
 #            thangnguyen0495/android-emulator:latest
       - name: Build Docker Image
         run: |
-          docker build -t emulator-container .
+          docker build -t emulator-image .
 
       - name: Start Docker Container
         run: |
-          docker run -d --name emulator-container --privileged \
-            android-emulator
+          docker run -d --name emulator-container --privileged emulator-image
+
       - name: Wait for Emulator to Start
         run: |
           sleep 60  # Wait for the emulator to boot up
           docker logs emulator-container
       - name: Check if Emulator Container is Running
         run: |
-          docker ps -a
+          docker ps
 
       - name: Check ADB Devices
         run: |
