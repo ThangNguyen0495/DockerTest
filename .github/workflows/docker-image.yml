@@ -41,7 +41,7 @@ jobs:
         run: |
           docker run -d --name emulator-container --privileged \
             -p 5555:5555 -p 5037:5037 -p 4723:4723 \
-            your-dockerhub-username/android-emulator:latest
+            thangnguyen0495/android-appium-test:latest
 
       - name: Wait for Emulator to Start
         run: |
