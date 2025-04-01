@@ -62,6 +62,10 @@ RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
 # Create an AVD (Android Virtual Device)
 RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
+# Expose necessary ports for ADB & Appium
+EXPOSE 4723  # Appium Server
+EXPOSE 5555  # ADB
+
 # Start Emulator when container runs
 CMD $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
     sleep 5; \

@@ -1,7 +1,6 @@
 name: Build docker image
 
-on:
-  workflow_dispatch:
+on: [push, pull_request]
 
 jobs:
   run-docker:
@@ -11,11 +10,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up QEMU (for ARM-based emulators, if needed)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y qemu-kvm
 
       # 🔹 Set up Docker Buildx for multi-platform builds
       - name: Set up Docker Buildx
