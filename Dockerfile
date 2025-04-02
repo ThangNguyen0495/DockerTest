@@ -23,15 +23,13 @@ RUN apt-get update --fix-missing && apt-get install -y \
     libgl1-mesa-dri \
     && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size \
 
-# Install Eclipse Temurin JDK 22
-RUN wget -O /tmp/jdk.tar.gz https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz \
-    && mkdir -p /opt/jdk \
-    && tar -xzf /tmp/jdk.tar.gz -C /opt/jdk --strip-components=1 \
-    && rm /tmp/jdk.tar.gz \
-    && ls -l /opt/jdk
+# Install OpenJDK 22 (Temurin JDK)
+RUN apt-get update && \
+    apt-get install -y openjdk-22-jdk && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set Java environment variables
-ENV JAVA_HOME=/opt/jdk
+ENV JAVA_HOME=/usr/lib/jvm/java-22-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
 # Verify Java installation
