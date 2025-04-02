@@ -30,7 +30,7 @@ RUN wget -O /tmp/jdk.tar.gz https://github.com/adoptium/temurin22-binaries/relea
     && rm /tmp/jdk.tar.gz
 
 # Set Java environment variables
-ENV JAVA_HOME=/usr
+ENV JAVA_HOME=/opt/jdk
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
 # Verify Java installation
