@@ -10,7 +10,6 @@ WORKDIR /app
 # Copy project files into the container
 COPY . .
 
-# Install dependencies
 RUN apt-get update --fix-missing && apt-get install -y \
     wget \
     curl \
@@ -22,10 +21,9 @@ RUN apt-get update --fix-missing && apt-get install -y \
     libgl1 \
     mesa-utils \
     libgl1-mesa-dri \
-    && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size \
+    && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size
 
-# Download and install Java 22
-RUN wget -q https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz -O openjdk-22.0.1_linux-x64_bin.tar.gz  \
+RUN wget -q https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz -O openjdk-22.0.1_linux-x64_bin.tar.gz \
     && tar -xvf openjdk-22.0.1_linux-x64_bin.tar.gz
 
 RUN  ls -a
