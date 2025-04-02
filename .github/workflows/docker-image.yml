@@ -1,20 +1,19 @@
 
 name: Run Android Emulator in Docker
-
-on: [push, pull_request]
+on:
+  workflow_dispatch:
 
 jobs:
   run-docker:
     runs-on: ubuntu-latest  # GitHub provides Ubuntu runners with Docker support
-    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 🔹 Set up Docker Buildx for multi-platform builds
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+#      # 🔹 Set up Docker Buildx for multi-platform builds
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v3
 
       # 🔹 Cache Docker Layers for Faster Builds
       - name: Cache Docker layers
@@ -47,3 +46,4 @@ jobs:
       - name: Check ADB Devices
         run: |
           docker exec emulator-container adb devices
+      

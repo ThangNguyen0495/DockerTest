@@ -4,6 +4,9 @@ FROM ubuntu:latest
 # Set non-interactive mode to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Copy project files into the container
+COPY . /app
+
 # Install dependencies
 RUN apt-get update --fix-missing && apt-get install -y \
     wget \
