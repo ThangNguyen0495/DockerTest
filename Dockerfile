@@ -25,16 +25,14 @@ RUN apt-get update --fix-missing && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size \
 
 # Download and install Java 22
-RUN wget -O java22.tar.gz https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz && \
-    tar -xzf java22.tar.gz -C /usr/local && \
-    rm java22.tar.gz
+RUN apt-get install -y openjdk-22-jdk
 
 # Set JAVA_HOME and update PATH
-ENV JAVA_HOME=/usr/local/java22
+ENV JAVA_HOME=/usr/lib/jvm/java-22-openjdk-amd64
 ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Verify installation
-RUN ls -l /usr/local
+RUN ls /usr/lib/jvm
 RUN java -version
 
 # Set environment variables
