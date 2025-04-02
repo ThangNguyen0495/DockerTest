@@ -27,8 +27,7 @@ RUN apt-get update --fix-missing && apt-get install -y \
 
 # Download and install Java 22
 RUN curl -O https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz &&\
-    tar xvf openjdk-22.0.1_linux-x64_bin.tar.gz &&\
-    mv jdk-22.0.1 /opt/
+    tar xvf openjdk-22.0.1_linux-x64_bin.tar.gz
 
 RUN  ls /opt
 
