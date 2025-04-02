@@ -1,128 +1,46 @@
-name: Run Test with Docker image
 
+name: Run Android Emulator in Docker
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: "Select the target environment"
-        required: true
-        type: choice
-        options:
-          - CA2 VN
-          - CA2 BIZ
-          - CA VN
-          - CA BIZ
-          - Staging VN
-          - Staging BIZ
-          - Production VN
-          - Production BIZ
-        default: "Staging VN"
-      testType:
-        description: "Select the test type"
-        required: true
-        type: choice
-        options:
-          - Smoke Test
-          - Regression Test
-        default: "Smoke Test"
-      test_configs:
-        description: >
-          List of test configurations (JSON format). 
-          Example: 
-          [
-            "DashboardLoginTest.xml",
-            "DashboardSupplierTest.xml",
-            "DashboardCreateProductTest.xml",
-            "DashboardUpdateProductTest.xml",
-            "DashboardProductManagementTest.xml",
-            "StorefrontProductDetailTest.xml",
-            "AndroidGoSELLERCreateProductTest.xml",
-            "AndroidGoSELLERUpdateProductTest.xml",
-            "AndroidGoSELLERSupplierTest.xml",
-            "AndroidGoBuyerProductDetail.xml",
-            "IOSGoSELLERCreateProductTest.xml",
-            "IOSGoSELLERUpdateProductTest.xml",
-            "IOSGoSELLERProductManagement.xml",
-            "IOSGoSELLERSupplierTest.xml",
-            "IOSGoBuyerProductDetail.xml"
-          ]
-        required: true
-        type: string
-        default: '[]'
-
-run-name: "[${{ github.event.inputs.environment }}][${{ github.event.inputs.testType }}] Run test with Docker image ${{ github.event.inputs.test_configs }}"
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.inputs.environment }}-${{ github.event.inputs.testType }}-${{ github.event.inputs.test_configs }}
-  cancel-in-progress: true
 
 jobs:
-  JOB:
-    env:
-      TEST_TYPE: ${{ github.event.inputs.testType == 'Smoke Test' && 'smoke' || 'regression' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        xmlConfiguration: ${{ fromJson(inputs.test_configs) }}
+  run-docker:
+    runs-on: ubuntu-latest  # GitHub provides Ubuntu runners with Docker support
 
-    runs-on: ${{ contains(matrix.xmlConfiguration, 'IOS') && 'macos-latest' || 'ubuntu-latest' }}
-    environment: ${{ github.event.inputs.environment }}
     steps:
-      - name: Set User Type
-        run: |
-          test_name=$(basename "${{ matrix.xmlConfiguration }}" .xml)
-          echo "test_name=$test_name" >> $GITHUB_ENV
-          if echo "$test_name" | grep -qE "Dashboard|SELLER"; then
-            user_type="seller"
-          else
-            user_type="buyer"
-          fi
-          echo "user_type=$user_type" >> $GITHUB_ENV
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 🔹 Set up Docker Buildx for multi-platform builds
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Load Cached Docker Image
-        id: cache-docker
+      # 🔹 Cache Docker Layers for Faster Builds
+      - name: Cache Docker layers
         uses: actions/cache@v4
         with:
-          path: /tmp/.docker-cache
+          path: /tmp/.buildx-cache
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-docker-
-
-      - name: Pull Docker Image
-        if: steps.cache-docker.outputs.cache-hit != 'true'
+      # 🔹 Build and Push Docker Image with Cache
+      - name: Build Docker Image
         run: |
-          docker pull thangnguyen0495/android-appium:latest
-          mkdir -p /tmp/.docker-cache
-          docker save -o /tmp/.docker-cache/android-appium.tar thangnguyen0495/android-appium:latest
-
-      - name: Load Cached Docker Image
-        if: steps.cache-docker.outputs.cache-hit == 'true'
-        run: docker load -i /tmp/.docker-cache/android-appium.tar
-
+          docker buildx build \
+            --cache-from=type=local,src=/tmp/.buildx-cache \
+            --cache-to=type=local,dest=/tmp/.buildx-cache \
+            -t thangnguyen0495/android-appium:latest .
+      # 🔹 Run the Container
       - name: Start Docker Container
         run: |
           docker run -d --name emulator-container --privileged \
             thangnguyen0495/android-appium:latest
-
       - name: Wait for Emulator to Start
         run: |
           sleep 60
           docker logs emulator-container
-
-      - name: Check ADB Devices and run Android test
+      - name: Check ADB Devices
         run: |
-          docker exec emulator-container adb devices && \
-          docker exec emulator-container bash -c "cd /app && mvn install -DskipTests" && \
-          docker exec emulator-container bash -c "cd /app && \
-            printf '%s\n' '${{ secrets.ENV_FILES }}' > src/main/resources/config.properties && \
-            printf '%s\n' '${{ vars.APP_URL }}' >> src/main/resources/config.properties && \
-            printf '%s\n' '${{ vars.REUSE_VARIABLE }}' >> src/main/resources/config.properties" && \
-          docker exec emulator-container bash -c "cd /app && \
-          mvn test -DsuiteFile=src/test/resources/${{ env.TEST_TYPE }}/android/${{ env.user_type }}/${{ matrix.xmlConfiguration }}"
-
-      
+          docker exec emulator-container adb devices
+          docker exec emulator-container bash -c "cd /app && mvn install -DskipTests"
+          docker exec emulator-container bash -c "cd /app && mvn test -DsuiteFile=test.xml"
