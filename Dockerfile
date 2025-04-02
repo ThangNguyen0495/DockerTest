@@ -1,5 +1,5 @@
 # Use a stable base image (Ubuntu 22.04 - Jammy)
-FROM ubuntu:22.04
+FROM ubuntu:latest
 
 # Set non-interactive mode to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -44,9 +44,6 @@ RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512
     && mv cmdline-tools/* . \
     && rm -rf cmdline-tools
 
-# Ensure correct directory structure
-RUN ls -R $ANDROID_HOME
-
 # Accept SDK licenses
 RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
 
@@ -61,15 +58,6 @@ RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
 # Create an AVD (Android Virtual Device)
 RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
-# Expose necessary ports for ADB
-EXPOSE 5555
-EXPOSE 5900
-
-# Start Emulator when container runs
-CMD \
-    $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
-    sleep 30 && adb devices && tail -f /dev/null
-
 # Install Node.js v20 & npm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
@@ -77,6 +65,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
 # Install Appium globally
 RUN npm install -g appium && appium driver install uiautomator2
 
-# Start Appium
+# Start Appium and Android emulator
 CMD bash -c "$ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
              sleep 30 && adb devices && appium -a 0.0.0.0 -p 4723 -pa /wd/hub"
