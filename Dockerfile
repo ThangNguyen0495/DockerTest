@@ -26,10 +26,11 @@ RUN apt-get update --fix-missing && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size \
 
 # Download and install Java 22
-RUN curl -O java22.tar.gz https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz && \
-    tar -xvf java22.tar.gz && \
-    ls -a && \
+RUN curl -O https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz &&\
+    tar xvf openjdk-22.0.1_linux-x64_bin.tar.gz &&\
     mv jdk-22.0.1 /opt/
+
+RUN  ls -a
 
 # Set JAVA_HOME and update PATH
 ENV JAVA_HOME=/opt/jdk-22.0.1
