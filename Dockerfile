@@ -23,17 +23,18 @@ RUN apt-get update --fix-missing && apt-get install -y \
     libgl1-mesa-dri \
     && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size \
 
-# Install OpenJDK 22 manually
-RUN wget -q https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz -O /tmp/jdk.tar.gz \
-    && mkdir -p /opt/jdk22 \
-    && tar -xzf /tmp/jdk.tar.gz -C /opt/jdk22 --strip-components=1 \
-    && rm /tmp/jdk.tar.gz
+# Download and install Java 22
+RUN wget -O java22.tar.gz https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz && \
+    tar -xzf java22.tar.gz -C /usr/local && \
+    rm java22.tar.gz
 
 # Set JAVA_HOME and update PATH
-ENV JAVA_HOME=/opt/jdk22
-ENV PATH="$JAVA_HOME/bin:$PATH"
+ENV JAVA_HOME=/usr/local/java22
+ENV PATH=$JAVA_HOME/bin:$PATH
 
-RUN ls /opt
+# Verify installation
+RUN ls -l /usr/local
+RUN java -version
 
 # Set environment variables
 ENV ANDROID_HOME=/root/android-sdk
