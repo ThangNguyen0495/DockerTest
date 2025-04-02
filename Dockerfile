@@ -4,8 +4,11 @@ FROM ubuntu:latest
 # Set non-interactive mode to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Set working directory
+WORKDIR /app
+
 # Copy project files into the container
-COPY . /app
+COPY . .
 
 # Install dependencies
 RUN apt-get update --fix-missing && apt-get install -y \
