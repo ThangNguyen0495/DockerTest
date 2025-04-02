@@ -11,9 +11,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-#      # 🔹 Set up Docker Buildx for multi-platform builds
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v3
+      # 🔹 Set up Docker Buildx for multi-platform builds
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       # 🔹 Cache Docker Layers for Faster Builds
       - name: Cache Docker layers
