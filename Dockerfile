@@ -35,6 +35,8 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 # Verify Java installation
 RUN which java
 
+RUN ls /usr/lib/jvm
+
 # Set environment variables
 ENV ANDROID_HOME=/root/android-sdk
 ENV ANDROID_SDK_ROOT=/root/android-sdk
