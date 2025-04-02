@@ -13,6 +13,7 @@ COPY . .
 # Install dependencies
 RUN apt-get update --fix-missing && apt-get install -y \
     wget \
+    tar \
     unzip \
     curl \
     git \
