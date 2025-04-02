@@ -1,19 +1,15 @@
-name: Build docker
+name: Build and Push Docker Image
 
 on: [push, pull_request]
 
 jobs:
-  run-docker:
+  build-and-push:
     runs-on: ubuntu-latest  # GitHub provides Ubuntu runners with Docker support
     timeout-minutes: 30
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      # 🔹 Set up Docker Buildx for multi-platform builds
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       # 🔹 Log in to DockerHub (Ensure secrets are set up in GitHub)
       - name: Log in to DockerHub
@@ -22,46 +18,12 @@ jobs:
           username: ${{ secrets.DOCKER_ACCOUNT }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 🔹 Build and Push Docker Image
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true  # Change to `false` if you only want to build locally
-          tags: thangnguyen0495/android-appium-test:latest
-
-      # 🔹 Pull & Run the Image
-      - name: Start Docker Container
+      # 🔹 Build Docker Image and Tag It
+      - name: Build Docker Image
         run: |
-          docker run -d --name emulator-container --privileged \
-            thangnguyen0495/android-emulator:latest
+          docker build -t thangnguyen0495/android-appium:latest .
 
-#      - name: Build Docker Image
-#        run: |
-#          docker build -t emulator-image .
-
-#      - name: Start Docker Container
-#        run: |
-#          docker run -d --name emulator-container --privileged -p 5555:5555 -p 5037:5037 -p 4723:4723 emulator-image
-
-      - name: Wait for Emulator to Start
+      # 🔹 Push Docker Image to Docker Hub
+      - name: Push Docker Image
         run: |
-          sleep 60  # Wait for the emulator to boot up
-          docker logs emulator-container
-      - name: Check if Emulator Container is Running
-        run: |
-          docker ps
-
-      - name: Check ADB Devices
-        run: |
-          docker exec emulator-container adb devices
-
-#      - name: Wait for Emulator to Start
-#        run: |
-#          sleep 60  # Wait for the emulator to boot up
-#          docker logs emulator-container
-#
-#      - name: Check ADB Devices
-#        run: |
-#          docker exec emulator-container adb devices
+          docker push thangnguyen0495/android-appium:latest

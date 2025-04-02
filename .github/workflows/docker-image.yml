@@ -31,13 +31,13 @@ jobs:
           docker buildx build \
             --cache-from=type=local,src=/tmp/.buildx-cache \
             --cache-to=type=local,dest=/tmp/.buildx-cache \
-            -t thangnguyen0495/android-emulator:latest .
+            -t thangnguyen0495/android-appium:latest .
 
       # 🔹 Run the Container
       - name: Start Docker Container
         run: |
           docker run -d --name emulator-container --privileged \
-            thangnguyen0495/android-emulator:latest
+            thangnguyen0495/android-appium:latest
 
       - name: Wait for Emulator to Start
         run: |
