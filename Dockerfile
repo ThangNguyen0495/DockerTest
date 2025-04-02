@@ -27,7 +27,8 @@ RUN apt-get update --fix-missing && apt-get install -y \
 RUN wget -O /tmp/jdk.tar.gz https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz \
     && mkdir -p /opt/jdk \
     && tar -xzf /tmp/jdk.tar.gz -C /opt/jdk --strip-components=1 \
-    && rm /tmp/jdk.tar.gz
+    && rm /tmp/jdk.tar.gz \
+    && ls -l /opt/jdk
 
 # Set Java environment variables
 ENV JAVA_HOME=/opt/jdk
