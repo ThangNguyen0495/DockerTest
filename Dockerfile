@@ -29,7 +29,7 @@ RUN apt-get update --fix-missing && apt-get install -y \
 RUN curl -O https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz &&\
     tar xvf openjdk-22.0.1_linux-x64_bin.tar.gz
 
-RUN  ls /opt
+RUN  ls -a
 
 # Set JAVA_HOME and update PATH
 ENV JAVA_HOME=/opt/jdk-22.0.1
