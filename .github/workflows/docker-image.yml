@@ -47,5 +47,5 @@ jobs:
         run: |
           docker exec emulator-container adb devices
           docker exec emulator-container bash -c "cd /app && mvn install -DskipTests"
-          docker exec emulator-container bash -c "cd /app && mvn -Dsuitefile=test.xml"
+          docker exec emulator-container bash -c "cd /app && mvn test -Dsuitefile=test.xml"
       
