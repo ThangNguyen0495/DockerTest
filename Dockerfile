@@ -4,7 +4,7 @@ FROM ubuntu:latest
 # Set non-interactive mode to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update --fix-missing && apt-get install -y \
+RUN apt-get update --fix-missing --allow-releaseinfo-change && apt-get install -y \
     wget \
     unzip \
     libgl1 \
