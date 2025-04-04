@@ -4,12 +4,6 @@ FROM ubuntu:latest
 # Set non-interactive mode to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Set working directory
-WORKDIR /app
-
-# Copy project files into the container
-COPY . .
-
 RUN apt-get update --fix-missing && apt-get install -y \
     wget \
     curl \
@@ -27,17 +21,9 @@ RUN wget -q https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341
     && tar -xvf openjdk-22.0.1_linux-x64_bin.tar.gz \
     && mv jdk-22.0.1 /opt/
 
-RUN  ls -a
-
 # Set JAVA_HOME and update PATH
 ENV JAVA_HOME=/opt/jdk-22.0.1
 ENV PATH=$JAVA_HOME/bin:$PATH
-
-# Set environment variables
-ENV ANDROID_HOME=/root/android-sdk
-ENV ANDROID_SDK_ROOT=/root/android-sdk
-ENV CMDLINE_TOOLS=$ANDROID_HOME/cmdline-tools
-ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 
 # Download Android command-line tools
 WORKDIR $CMDLINE_TOOLS/latest
@@ -47,27 +33,8 @@ RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512
     && mv cmdline-tools/* . \
     && rm -rf cmdline-tools
 
-# Accept SDK licenses
-RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
 
-# Install necessary SDK tools
-RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
-    "platform-tools" \
-    "platforms;android-35" \
-    "build-tools;35.0.0" \
-    "system-images;android-35;google_apis;x86_64" \
-    "emulator"
-
-# Create an AVD (Android Virtual Device)
-RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
-
-# Install Node.js v20 & npm
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
-
-# Install Appium globally
-RUN npm install -g appium && appium driver install uiautomator2
-
-# Start Appium and Android emulator
-CMD bash -c "$ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
-             sleep 30 && adb devices && appium -a 0.0.0.0 -p 4723 -pa /wd/hub"
+# Install Google Chrome browser
+RUN wget -q -O - https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > google-chrome.deb && \
+    dpkg -i google-chrome.deb || apt-get install -f && \
+    rm google-chrome.deb
