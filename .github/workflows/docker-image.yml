@@ -11,33 +11,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 🔹 Set up Docker Buildx for multi-platform builds
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # 🔹 Cache Docker Layers for Faster Builds
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
-      # 🔹 Build and Push Docker Image with Cache
-      - name: Build Docker Image
-        run: |
-          docker buildx build \
-            --cache-from=type=local,src=/tmp/.buildx-cache \
-            --cache-to=type=local,dest=/tmp/.buildx-cache \
-            -t thangnguyen0495/chrome-selenium:latest .
       # 🔹 Run the Container
       - name: Start Docker Container
         run: |
           docker run -d --name emulator-container --privileged \
             thangnguyen0495/chrome-selenium:latest
+
       - name: Wait for Emulator to Start
         run: |
-          sleep 60
           docker logs emulator-container
       - name: Check ADB Devices
         run: |
