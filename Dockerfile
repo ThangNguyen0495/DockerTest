@@ -45,18 +45,17 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install
 RUN npm install -g appium && appium driver install uiautomator2
 
 # Set default command to run emulator and appium
-CMD bash -c '\
-  $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
-  echo "Waiting for emulator to boot..." && \
-  boot_completed="" && \
-  until [[ "$boot_completed" == "1" ]]; do \
-    sleep 5; \
-    boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r"); \
-    echo "Still waiting..."; \
-  done && \
-  echo "Emulator booted!" && \
-  adb shell settings put global window_animation_scale 0.0 && \
-  adb shell settings put global transition_animation_scale 0.0 && \
-  adb shell settings put global animator_duration_scale 0.0 && \
-  appium -a 0.0.0.0 -p 4723 -pa /wd/hub'
+CMD bash -c '$ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose &\
+           echo "Waiting for emulator to boot..." && \
+           boot_completed="" && \
+           until [[ "$boot_completed" == "1" ]]; do \
+             sleep 5; \
+             boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r"); \
+             echo "Still waiting..."; \
+           done && \
+           echo "Emulator booted!" && \
+           adb shell settings put global window_animation_scale 0.0 && \
+           adb shell settings put global transition_animation_scale 0.0 && \
+           adb shell settings put global animator_duration_scale 0.0 && \
+           adb devices && appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security'
 
