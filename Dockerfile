@@ -44,10 +44,6 @@ RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 RUN npm install -g appium && appium driver install uiautomator2
 
-# Copy emulator startup script and set permissions
-COPY start_emu.sh /usr/local/bin/start_emu.sh
-RUN chmod +x /usr/local/bin/start_emu.sh
-
 # Set default command to run emulator and appium
 CMD bash -c '\
   $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
