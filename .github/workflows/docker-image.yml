@@ -29,12 +29,12 @@ jobs:
           docker buildx build \
             --cache-from=type=local,src=/tmp/.buildx-cache \
             --cache-to=type=local,dest=/tmp/.buildx-cache \
-            -t thangnguyen0495/android-appium:latest .
+            -t thangnguyen0495/chrome-selenium:latest .
       # 🔹 Run the Container
       - name: Start Docker Container
         run: |
           docker run -d --name emulator-container --privileged \
-            thangnguyen0495/android-appium:latest
+            thangnguyen0495/chrome-selenium:latest
       - name: Wait for Emulator to Start
         run: |
           sleep 60
