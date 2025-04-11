@@ -48,17 +48,7 @@ RUN npm install -g appium && appium driver install uiautomator2
 CMD bash -c '\
   echo "🚀 Starting emulator..." && \
   $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
-  echo "Waiting for emulator to boot..." && \
-  boot_completed="" && \
-  until [[ "$boot_completed" == "1" ]]; do \
-    sleep 5; \
-    boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r"); \
-    echo "Still waiting..."; \
-  done && \
-  echo "✅ Emulator booted!" && \
-  adb shell settings put global window_animation_scale 0.0 && \
-  adb shell settings put global transition_animation_scale 0.0 && \
-  adb shell settings put global animator_duration_scale 0.0 && \
+  sleep 30 && \
   adb devices && \
   echo "🚀 Starting Appium server..." && \
-  appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security --base-path /wd/hub'
+  appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security'
