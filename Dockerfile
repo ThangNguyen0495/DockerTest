@@ -40,22 +40,28 @@ RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
 # Create emulator (Pixel 3 as example)
 RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
+# Modify AVD config
+RUN AVD_CONFIG="/root/.android/avd/emu.avd/config.ini" && \
+    if [ -f "$AVD_CONFIG" ]; then \
+        echo "Modifying AVD config..." && \
+        echo "hw.cpu.ncore=4" >> "$AVD_CONFIG" && \
+        echo "hw.ramSize=4096" >> "$AVD_CONFIG" && \
+        echo "hw.heapSize=512" >> "$AVD_CONFIG" && \
+        echo "disk.dataPartition.size=6G" >> "$AVD_CONFIG" && \
+        echo "hw.keyboard=yes" >> "$AVD_CONFIG" ; \
+    else \
+        echo "AVD config not found!" && exit 1 ; \
+    fi
+
 # Install Node.js v20 + Appium
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 RUN npm install -g appium && appium driver install uiautomator2
 
+# Copy entry point bash
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+CMD ["entrypoint.sh"]
+
 # Set default command to run emulator and appium
-CMD bash -c '$ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose &\
-           echo "Waiting for emulator to boot..." && \
-           boot_completed="" && \
-           until [[ "$boot_completed" == "1" ]]; do \
-             sleep 5; \
-             boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r"); \
-             echo "Still waiting..."; \
-           done && \
-           echo "Emulator booted!" && \
-           adb shell settings put global window_animation_scale 0.0 && \
-           adb shell settings put global transition_animation_scale 0.0 && \
-           adb shell settings put global animator_duration_scale 0.0 && \
-           adb devices && appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security'
+CMD ["bash", "entrypoint.sh"]
 
