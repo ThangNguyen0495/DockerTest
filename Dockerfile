@@ -57,4 +57,4 @@ CMD bash -c '$ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu 
            adb shell settings put global window_animation_scale 0.0 && \
            adb shell settings put global transition_animation_scale 0.0 && \
            adb shell settings put global animator_duration_scale 0.0 && \
-           adb devices && appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security'
+           adb devices && appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security &'
