@@ -28,3 +28,16 @@ jobs:
       - name: Push Docker Image
         run: |
           docker push thangnguyen0495/android-appium:latest
+
+      - name: Start Docker Container
+        run: |
+          docker run -d --name emulator-container --privileged \
+            thangnguyen0495/android-appium:latest
+
+      - name: Wait for Emulator to Start
+        run: |
+          docker logs emulator-container
+
+      - name: Check ADB Devices
+        run: |
+          docker exec emulator-container adb devices
