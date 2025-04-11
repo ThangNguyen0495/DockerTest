@@ -58,15 +58,5 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install
 RUN npm install -g appium && appium driver install uiautomator2
 
 # Start Appium and Android emulator
-CMD bash -c '\
-  echo "🚀 Starting emulator..." && \
-  $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
-  sleep 2 && \
-  boot_completed="" && \
-  until [[ "$boot_completed" == "1" ]]; do \
-    sleep 5; \
-    boot_completed=$(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d "\r\n"); \
-  done && \
-  adb devices && \
-  appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security --base-path /wd/hub & \
-  tail -f /dev/null'
+CMD bash -c "$ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
+             sleep 30 && adb devices && appium -a 0.0.0.0 -p 4723 -pa /wd/hub"
