@@ -1,35 +1,56 @@
-# Use Ubuntu 22.04
+# Use a stable base image (Ubuntu 22.04 - Jammy)
 FROM ubuntu:latest
 
+# Set non-interactive mode to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
+
+# Set working directory
 WORKDIR /app
 
+# Copy project files into the container
 COPY . .
 
 RUN apt-get update --fix-missing && apt-get install -y \
-    wget curl tar unzip git sudo maven libgl1 mesa-utils libgl1-mesa-dri \
-    && rm -rf /var/lib/apt/lists/*
+    wget \
+    curl \
+    tar \
+    unzip \
+    git \
+    sudo \
+    maven \
+    libgl1 \
+    mesa-utils \
+    libgl1-mesa-dri \
+    && rm -rf /var/lib/apt/lists/*  # Clean up to reduce image size
 
-# Install Java 22
-RUN wget -q https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz -O openjdk.tar.gz \
-    && tar -xvf openjdk.tar.gz && mv jdk-22.0.1 /opt/
+RUN wget -q https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz -O openjdk-22.0.1_linux-x64_bin.tar.gz \
+    && tar -xvf openjdk-22.0.1_linux-x64_bin.tar.gz \
+    && mv jdk-22.0.1 /opt/
 
+RUN  ls -a
+
+# Set JAVA_HOME and update PATH
 ENV JAVA_HOME=/opt/jdk-22.0.1
 ENV PATH=$JAVA_HOME/bin:$PATH
 
-# Set Android SDK environment
+# Set environment variables
 ENV ANDROID_HOME=/root/android-sdk
 ENV ANDROID_SDK_ROOT=/root/android-sdk
 ENV CMDLINE_TOOLS=$ANDROID_HOME/cmdline-tools
 ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
 
-# Download Android SDK CLI
-RUN mkdir -p $CMDLINE_TOOLS/latest && cd $CMDLINE_TOOLS/latest && \
-    wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O cmdline-tools.zip && \
-    unzip cmdline-tools.zip && rm cmdline-tools.zip && mv cmdline-tools/* . && rm -rf cmdline-tools
+# Download Android command-line tools
+WORKDIR $CMDLINE_TOOLS/latest
+RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O cmdline-tools.zip \
+    && unzip cmdline-tools.zip \
+    && rm cmdline-tools.zip \
+    && mv cmdline-tools/* . \
+    && rm -rf cmdline-tools
 
-# Accept licenses and install SDK components
+# Accept SDK licenses
 RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
+
+# Install necessary SDK tools
 RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
     "platform-tools" \
     "platforms;android-35" \
@@ -37,24 +58,14 @@ RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
     "system-images;android-35;google_apis;x86_64" \
     "emulator"
 
-# Create emulator (Pixel 3 as example)
+# Create an AVD (Android Virtual Device)
 RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
-# Modify AVD config
-RUN AVD_CONFIG="/root/.android/avd/emu.avd/config.ini" && \
-    if [ -f "$AVD_CONFIG" ]; then \
-        echo "Modifying AVD config..." && \
-        echo "hw.cpu.ncore=4" >> "$AVD_CONFIG" && \
-        echo "hw.ramSize=4096" >> "$AVD_CONFIG" && \
-        echo "hw.heapSize=512" >> "$AVD_CONFIG" && \
-        echo "disk.dataPartition.size=6G" >> "$AVD_CONFIG" && \
-        echo "hw.keyboard=yes" >> "$AVD_CONFIG" ; \
-    else \
-        echo "AVD config not found!" && exit 1 ; \
-    fi
+# Install Node.js v20 & npm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
 
-# Install Node.js v20 + Appium
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
+# Install Appium globally
 RUN npm install -g appium && appium driver install uiautomator2
 
 # Start Appium and Android emulator
