@@ -61,4 +61,5 @@ CMD bash -c '\
   adb shell settings put global animator_duration_scale 0.0 && \
   adb devices && \
   echo "🚀 Starting Appium server..." && \
-  appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security --base-path /wd/hub'
+  appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security --base-path /wd/hub & \
+  tail -f /dev/null'
