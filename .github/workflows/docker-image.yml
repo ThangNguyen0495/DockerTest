@@ -15,7 +15,7 @@ jobs:
       - name: Start Docker Container
         run: |
           docker run -d --name emulator-container --privileged \
-            thangnguyen0495/chrome-selenium:latest
+            thangnguyen0495/android-appium:latest
 
       - name: Wait for Emulator to Start
         run: |
