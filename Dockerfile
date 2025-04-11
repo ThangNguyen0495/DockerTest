@@ -57,11 +57,27 @@ RUN AVD_CONFIG="/root/.android/avd/emu.avd/config.ini" && \
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 RUN npm install -g appium && appium driver install uiautomator2
 
-# Copy entry point bash
-COPY entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh
-CMD ["entrypoint.sh"]
-
-# Set default command to run emulator and appium
-CMD ["bash", "entrypoint.sh"]
+# Start Appium and Android emulator
+CMD bash -c '\
+  echo "🚀 Starting emulator..." && \
+  $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose > /emulator.log 2>&1 & \
+  sleep 2 && \
+  echo "📦 Waiting for emulator to boot..." && \
+  boot_completed="" && \
+  until [[ "$boot_completed" == "1" ]]; do \
+    sleep 5; \
+    boot_completed=$(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d "\r\n"); \
+    echo "⏳ Still waiting for emulator..."; \
+  done && \
+  echo "✅ Emulator booted!" && \
+  adb devices && \
+  echo "🚀 Starting Appium server..." && \
+  appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security --base-path /wd/hub > /appium.log 2>&1 & \
+  echo "⏳ Waiting for Appium to be ready..." && \
+  until curl -s http://localhost:4723/wd/hub/status | grep -q "\"ready\":[ ]*true"; do \
+    sleep 2; \
+    echo "⏳ Appium not ready yet..."; \
+  done && \
+  echo "✅ Appium is ready!" && \
+  tail -f /dev/null'
 
