@@ -21,4 +21,4 @@ adb -s emulator-5554 shell settings put global animator_duration_scale 0.0
 
 # Start Appium
 echo "🚀 Starting Appium server..."
-appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security
+appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security &
