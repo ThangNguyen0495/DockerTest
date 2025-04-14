@@ -40,6 +40,19 @@ RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
 # Create emulator (Pixel 3 as example)
 RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
 
+# Customize AVD configuration
+RUN AVD_PATH="$HOME/.android/avd/emu.avd/config.ini" && \
+    if [ -f "$AVD_PATH" ]; then \
+        echo "Modifying emulator config..." && \
+        echo "hw.cpu.ncore=4" >> "$AVD_PATH" && \
+        echo "hw.ramSize=4096" >> "$AVD_PATH" && \
+        echo "hw.heapSize=512" >> "$AVD_PATH" && \
+        echo "disk.dataPartition.size=6G" >> "$AVD_PATH" && \
+        echo "hw.keyboard=yes" >> "$AVD_PATH"; \
+    else \
+        echo "AVD not found! Skipping configuration." && exit 1; \
+    fi
+
 # Install Node.js v20 + Appium
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 RUN npm install -g appium && appium driver install uiautomator2
