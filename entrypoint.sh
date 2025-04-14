@@ -1,30 +1,28 @@
 #!/bin/bash
 
-echo "🚀 Starting emulator..."
+# Your original script here
+"$ANDROID_HOME"/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose &
 
-# Start emulator in background
-nohup "$ANDROID_HOME"/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim > emulator.log 2>&1 &
-
-# Wait for emulator to fully boot
+echo "Waiting for emulator to boot..."
 boot_completed=""
-while [ "$boot_completed" != "1" ]; do
+until [[ "$boot_completed" == "1" ]]; do
   sleep 5
-  boot_completed=$(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r\n' || true)
-  echo "⏳ Waiting for emulator to boot..."
+  boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r")
+  echo "Still waiting..."
 done
-echo "✅ Emulator has booted!"
+
+echo "Emulator booted!"
+
+adb shell settings put global window_animation_scale 0.0
+adb shell settings put global transition_animation_scale 0.0
+adb shell settings put global animator_duration_scale 0.0
+
 adb devices
 
-# Start Appium in background
-echo "🚀 Starting Appium server..."
-nohup appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium.log 2>&1 &
+echo "Starting Appium..."
+appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium_log.txt 2>&1 &
+sleep 5
 
-# Wait for Appium to be ready
-until curl -s http://localhost:4723/wd/hub/status | grep -q '"ready":[ ]*true'; do
-  sleep 2
-  echo "⏳ Waiting for Appium to be ready..."
-done
-echo "✅ Appium server is ready!"
-
-# Keep container alive
-tail -f /dev/null
+# Keep the container session active
+echo "Container is running. Opening a shell..."
+exec bash
