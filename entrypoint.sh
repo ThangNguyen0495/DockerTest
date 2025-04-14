@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Start appium server by terminal
+echo "Starting Appium..."
+appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium_log.txt 2>&1 &
+sleep 5
+
 # Start emulator by terminal
 "$ANDROID_HOME"/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose &
 
@@ -23,10 +28,6 @@ adb -P 5037 -s emulator-5554 shell settings put global transition_animation_scal
 adb -P 5037 -s emulator-5554 shell settings put global animator_duration_scale 0
 
 adb devices
-
-echo "Starting Appium..."
-appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium_log.txt 2>&1 &
-sleep 5
 
 # Keep the container session active
 echo "Container is running. Opening a shell..."
