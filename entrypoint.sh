@@ -3,15 +3,7 @@
 # Your original script here
 "$ANDROID_HOME"/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose &
 
-echo "Waiting for emulator to boot..."
-boot_completed=""
-until [[ "$boot_completed" == "1" ]]; do
-  sleep 5
-  boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r")
-  echo "Still waiting..."
-done
-
-echo "Emulator booted!"
+sleep 30
 
 adb shell settings put global window_animation_scale 0.0
 adb shell settings put global transition_animation_scale 0.0
