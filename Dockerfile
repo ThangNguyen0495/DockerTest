@@ -48,7 +48,7 @@ RUN npm install -g appium && appium driver install uiautomator2
 COPY entrypoint.sh /app/entrypoint.sh
 
 # Make the Bash file executable
-RUN chmod +x entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 # Run the Bash file when the container starts
 CMD ["bash", "/app/entrypoint.sh"]
