@@ -22,7 +22,7 @@ jobs:
 
       - name: Check Mounted Code in Container
         run: |
-          docker exec emulator-container ls -la /app
+          docker exec -it emulator-container ls -la /app
 
       - name: Run Maven Install inside Container
         run: |
