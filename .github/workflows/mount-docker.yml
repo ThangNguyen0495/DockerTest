@@ -1,26 +1,26 @@
-
-name: Run Android Emulator in Docker
+name: Run Android Emulator in Docker (Mount)
 on:
   workflow_dispatch:
 
 jobs:
   run-docker:
-    runs-on: ubuntu-latest  # GitHub provides Ubuntu runners with Docker support
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Start Docker Container
+      - name: Start Docker Container with Volume Mount
         run: |
           docker run -d --name emulator-container --privileged \
+            -v ${{ github.workspace }}:/app \
             thangnguyen0495/android-appium:latest
 
       - name: Wait for Emulator to Start
         run: |
           docker logs emulator-container
-      - name: Check ADB Devices
+
+      - name: Run Tests inside Container
         run: |
-          docker exec emulator-container adb devices
           docker exec emulator-container bash -c "cd /app && mvn install -DskipTests"
           docker exec emulator-container bash -c "cd /app && mvn test -DsuiteFile=test.xml"
