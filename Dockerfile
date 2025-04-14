@@ -1,4 +1,4 @@
-# Use Ubuntu 22.04
+# Use a stable base image (Ubuntu 22.04 - Jammy)
 FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -44,11 +44,6 @@ RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 RUN npm install -g appium && appium driver install uiautomator2
 
-# Set default command to run emulator and appium
-CMD bash -c '\
-  echo "🚀 Starting emulator..." && \
-  $ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
-  sleep 30 && \
-  adb devices && \
-  echo "🚀 Starting Appium server..." && \
-  appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security'
+# Start Appium and Android emulator
+CMD bash -c "$ANDROID_HOME/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose & \
+             sleep 30 && adb devices && appium -a 0.0.0.0 -p 4723 -pa /wd/hub"
