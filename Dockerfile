@@ -53,6 +53,8 @@ RUN AVD_PATH="$HOME/.android/avd/emu.avd/config.ini" && \
         echo "AVD not found! Skipping configuration." && exit 1; \
     fi
 
+RUN ls -R $ANDROID_HOME/platform-tools
+
 # Install Node.js v20 + Appium
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 RUN npm install -g appium && appium driver install uiautomator2

@@ -24,20 +24,20 @@ jobs:
         run: |
           docker build -t thangnguyen0495/android-appium:latest .
 
-      # 🔹 Push Docker Image to Docker Hub
-      - name: Push Docker Image
-        run: |
-          docker push thangnguyen0495/android-appium:latest
-
-      - name: Start Docker Container
-        run: |
-          docker run -d --name emulator-container --privileged \
-            thangnguyen0495/android-appium:latest
-
-      - name: Wait for Emulator to Start
-        run: |
-          docker logs emulator-container
-
-      - name: Check ADB Devices
-        run: |
-          docker exec emulator-container adb devices
+#      # 🔹 Push Docker Image to Docker Hub
+#      - name: Push Docker Image
+#        run: |
+#          docker push thangnguyen0495/android-appium:latest
+#
+#      - name: Start Docker Container
+#        run: |
+#          docker run -d --name emulator-container --privileged \
+#            thangnguyen0495/android-appium:latest
+#
+#      - name: Wait for Emulator to Start
+#        run: |
+#          docker logs emulator-container
+#
+#      - name: Check ADB Devices
+#        run: |
+#          docker exec emulator-container adb devices
