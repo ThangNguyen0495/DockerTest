@@ -51,4 +51,4 @@ COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x entrypoint.sh
 
 # Run the Bash file when the container starts
-CMD ["bash", "-c", "/app/entrypoint.sh && tail -f /dev/null"]
+CMD ["bash", "/app/entrypoint.sh"]

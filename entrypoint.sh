@@ -17,4 +17,4 @@ sleep 5
 
 # Keep the container session active
 echo "Container is running. Opening a shell..."
-exec bash
+tail -f /dev/null
