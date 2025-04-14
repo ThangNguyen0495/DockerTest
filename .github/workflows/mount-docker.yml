@@ -20,9 +20,9 @@ jobs:
         run: |
           docker ps -a
 
-      - name: Check Mounted Code in Container
+      - name: Check mounted folder
         run: |
-          docker exec -it emulator-container ls -la /app
+          docker exec emulator-container ls -la /app
 
       - name: Run Maven Install inside Container
         run: |
