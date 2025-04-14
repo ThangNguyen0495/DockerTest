@@ -16,22 +16,6 @@ jobs:
             -v ${{ github.workspace }}:/app \
             thangnguyen0495/android-appium:latest
 
-      - name: Wait for Emulator to Boot
-        run: |
-          # Optionally add a wait loop or sleep to let the emulator boot fully.
-          # For example, wait up to 2 minutes for the emulator to be ready:
-          for i in {1..24}; do
-              logs=$(docker logs emulator-container 2>&1)
-              if echo "$logs" | grep -q "Emulator booted"; then
-                  echo "Emulator booted..."
-                  exit 0
-              fi
-              echo "Waiting for emulator... attempt $i"
-              sleep 5
-          done
-          echo "Emulator did not boot in time"
-          exit 1
-
       - name: Check Mounted Code in Container
         run: |
           docker exec emulator-container ls -la /app
