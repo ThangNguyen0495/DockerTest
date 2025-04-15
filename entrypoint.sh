@@ -33,21 +33,20 @@ set -e
 
 #!/bin/bash
 echo "[1/5] Starting Android Emulator..."
-"$ANDROID_HOME"/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose &
+"$ANDROID_HOME"/emulator/emulator -avd emu \
+  -no-audio -no-window -gpu swiftshader_indirect \
+  -no-snapshot -no-boot-anim -verbose > /app/emulator_log.txt 2>&1 &
 
-echo "[2/5] Waiting for Emulator to boot..."
-sleep 30
+echo "[2/5] Starting Appium server..."
+appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium_log.txt 2>&1 &
 
-echo "[3/5] Disabling hidden APIs and animations..."
+echo "[3/5] Waiting for Emulator to boot..."
+adb wait-for-device
+
+echo "[4/5] Disabling hidden APIs and animations..."
 adb shell settings put global window_animation_scale 0.0
 adb shell settings put global transition_animation_scale 0.0
 adb shell settings put global animator_duration_scale 0.0
-
-adb devices
-
-echo "[4/5] Starting Appium server..."
-appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium_log.txt 2>&1 &
-sleep 5
 
 # Keep the container session active
 echo "[5/5] All set. Emulator & Appium are ready. Keeping container alive..."
