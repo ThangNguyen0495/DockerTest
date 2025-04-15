@@ -3,7 +3,7 @@ set -e
 
 echo "[1/5] Starting Appium server..."
 appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > /app/appium_log.txt 2>&1 &
-sleep 5
+sleep 10
 
 echo "[2/5] Starting Android Emulator..."
 "$ANDROID_HOME"/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose &
@@ -14,6 +14,7 @@ boot_completed=""
 until [[ "$boot_completed" == "1" ]]; do
   sleep 10
   boot_completed=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+  echo "Current boot_completed value: '$boot_completed'"
 done
 echo "Emulator boot completed."
 
