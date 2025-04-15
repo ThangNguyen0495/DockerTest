@@ -41,7 +41,16 @@ echo "[2/5] Starting Android Emulator..."
   -no-snapshot -no-boot-anim -verbose > /app/emulator_log.txt 2>&1 &
 
 echo "[3/5] Waiting for Emulator to boot..."
-adb wait-for-device
+boot_completed=""
+timeout=0
+max_wait=60
+
+while [[ "$boot_completed" != "1" && $timeout -lt $max_wait ]]; do
+  sleep 5
+  boot_completed=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+  echo "Boot status: $boot_completed (after ${timeout}s)"
+  timeout=$((timeout + 5))
+done
 
 echo "[4/5] Disabling hidden APIs and animations..."
 adb shell settings put global window_animation_scale 0.0
