@@ -1,6 +1,4 @@
 #!/bin/bash
-set -e
-
 #echo "[1/5] Starting Appium server..."
 #appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > /app/appium_log.txt 2>&1 &
 #sleep 10
