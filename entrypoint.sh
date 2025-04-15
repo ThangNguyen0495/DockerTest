@@ -9,6 +9,7 @@ echo "[2/5] Starting Android Emulator..."
 "$ANDROID_HOME"/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose &
 
 echo "[3/5] Waiting for Emulator to boot..."
+sleep 30
 boot_completed=""
 until [[ "$boot_completed" == "1" ]]; do
   sleep 10
