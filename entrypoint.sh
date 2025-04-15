@@ -1,46 +1,31 @@
 #!/bin/bash
+set -e
 
-# Start Appium server
-echo "Starting Appium..."
-appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium_log.txt 2>&1 &
+echo "[1/5] Starting Appium server..."
+appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > /app/appium_log.txt 2>&1 &
 sleep 5
 
-# Start emulator
-echo "Starting Emulator..."
-"$ANDROID_HOME"/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose &
+echo "[2/5] Starting Android Emulator..."
+"$ANDROID_HOME"/emulator/emulator -avd emu \
+  -no-audio -no-window -gpu swiftshader_indirect \
+  -no-snapshot -no-boot-anim -verbose > /app/emulator_log.txt 2>&1 &
 
-# Wait for the emulator to be ready
-echo "Waiting for Emulator to boot..."
-boot_completed=false
-while [ "$boot_completed" == false ]; do
+echo "[3/5] Waiting for Emulator to boot..."
+boot_completed=""
+until [[ "$boot_completed" == "1" ]]; do
   sleep 10
-  boot_completed=$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null)
+  boot_completed=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
 done
-echo "Emulator has booted!"
+echo "Emulator boot completed."
 
-# Disable Hidden API Policy Restrictions
-echo "Disabling Hidden API Policy Restrictions..."
-adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps
-adb -s emulator-5554 shell settings delete global hidden_api_policy_p_apps
-adb -s emulator-5554 shell settings delete global hidden_api_policy
+echo "[4/5] Disabling hidden APIs and animations..."
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps || true
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_p_apps || true
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy || true
 
-# Disable Animations
-echo "Disabling Animations..."
-adb -s emulator-5554 shell settings put global window_animation_scale 0
-adb -s emulator-5554 shell settings put global transition_animation_scale 0
-adb -s emulator-5554 shell settings put global animator_duration_scale 0
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings put global window_animation_scale 0
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings put global transition_animation_scale 0
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings put global animator_duration_scale 0
 
-# Download the latest APK file from GitHub
-echo "Downloading APK..."
-wget https://github.com/username/repository/releases/latest/download/app-debug.apk
-
-# Install the APK on the emulator
-echo "Installing APK..."
-adb -s emulator-5554 install app-debug.apk
-
-# List connected devices
-adb devices
-
-# Keep the container session active
-echo "Container is running. Opening a shell..."
+echo "[5/5] All set. Emulator & Appium are ready. Keeping container alive..."
 tail -f /dev/null
