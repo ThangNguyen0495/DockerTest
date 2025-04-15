@@ -9,21 +9,29 @@ echo "[2/6] Starting Android Emulator..."
   -no-audio -no-window -gpu swiftshader_indirect \
   -no-snapshot -no-boot-anim -verbose > /app/emulator_log.txt 2>&1 &
 
-echo "[3/6] Waiting for device to appear..."
-"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 wait-for-device
+echo "[3/6] Waiting for emulator to appear in adb..."
+timeout=0
+max_wait=120
+while [[ $timeout -lt $max_wait ]]; do
+  devices_output=$("$ANDROID_HOME"/platform-tools/adb devices | grep emulator-5554)
+  if [[ -n "$devices_output" ]]; then
+    echo "Emulator appeared: $devices_output"
+    break
+  fi
+  echo "[$timeout s] Emulator not ready yet..."
+  sleep 5
+  timeout=$((timeout + 5))
+done
 
-echo "[4/6] Waiting for Emulator to boot..."
+echo "[4/6] Waiting for emulator to complete boot..."
 boot_completed=""
 timeout=0
-max_wait=300
-while [[ $timeout -lt $max_wait ]] ; do
-  sleep 2
-  (( timeout += 2 ))
+max_wait=120
+while [ "$boot_completed" != "1" ] && [ $timeout -lt $max_wait ]; do
   boot_completed=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
-  echo "Boot status: $boot_completed (after $timeout seconds)"
-  if [ "$boot_completed" == "1" ]; then
-      break
-  fi
+  echo "Boot status: '$boot_completed' after ${timeout}s"
+  sleep 5
+  timeout=$((timeout + 5))
 done
 
 echo "[5/6] Disabling Hidden API Policy Restrictions..."
