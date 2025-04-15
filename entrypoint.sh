@@ -32,13 +32,13 @@ set -x
 
 
 #!/bin/bash
-echo "[1/5] Starting Android Emulator..."
+echo "[1/5] Starting Appium server..."
+appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium_log.txt 2>&1 &
+
+echo "[2/5] Starting Android Emulator..."
 "$ANDROID_HOME"/emulator/emulator -avd emu \
   -no-audio -no-window -gpu swiftshader_indirect \
   -no-snapshot -no-boot-anim -verbose > /app/emulator_log.txt 2>&1 &
-
-echo "[2/5] Starting Appium server..."
-appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium_log.txt 2>&1 &
 
 echo "[3/5] Waiting for Emulator to boot..."
 adb wait-for-device
