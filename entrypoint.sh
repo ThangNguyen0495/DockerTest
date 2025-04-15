@@ -43,10 +43,10 @@ echo "[2/5] Starting Android Emulator..."
 echo "[3/5] Waiting for Emulator to boot..."
 boot_completed=""
 timeout=0
-max_wait=60
+max_wait=300
 while [[ $timeout -lt $max_wait ]] ; do
-  sleep 5
-  (( timeout += 5 ))
+  sleep 2
+  (( timeout += 2 ))
   boot_completed=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
   echo "Boot status: $boot_completed"
   if [ "$boot_completed" == "1" ]; then
