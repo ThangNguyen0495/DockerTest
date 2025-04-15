@@ -12,13 +12,19 @@ echo "[2/6] Starting Android Emulator..."
 echo "[3/6] Waiting for emulator to appear in adb..."
 timeout=0
 max_wait=120
-while [[ $timeout -lt $max_wait ]]; do
-  devices_output=$("$ANDROID_HOME"/platform-tools/adb devices | grep emulator-5554)
-  if [[ -n "$devices_output" ]]; then
-    echo "Emulator appeared: $devices_output"
+
+while [ $timeout -lt $max_wait ]; do
+  devices_output=$("$ANDROID_HOME"/platform-tools/adb devices)
+
+  echo "[${timeout}s] ADB Devices Output:"
+  echo "$devices_output"
+
+  if [[ "$devices_output" == *"emulator-5554"* ]]; then
+    echo "Emulator detected in adb!"
     break
   fi
-  echo "[$timeout s] Emulator not ready yet..."
+
+  echo "Waiting for emulator to appear..."
   sleep 5
   timeout=$((timeout + 5))
 done
