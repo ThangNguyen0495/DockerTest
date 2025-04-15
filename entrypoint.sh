@@ -1,20 +1,20 @@
 #!/bin/bash
-set -x
+set -e
 
-echo "[1/6] Starting Appium server..."
-appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium_log.txt 2>&1 &
-
-echo "[2/6] Starting Android Emulator..."
-"$ANDROID_HOME"/emulator/emulator -avd emu \
+echo "[1/6] Starting Android Emulator..."
+nohup "$ANDROID_HOME"/emulator/emulator -avd emu \
   -no-audio -no-window -gpu swiftshader_indirect \
-  -no-snapshot -no-boot-anim -verbose > /app/emulator_log.txt 2>&1 &
+  -no-snapshot -no-boot-anim -verbose > /dev/null 2>&1 &
+
+echo "[2/6] Starting Appium server..."
+nohup appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > /dev/null 2>&1 &
 
 echo "[3/6] Waiting for emulator to appear in adb..."
 timeout=0
 max_wait=120
 
 while [ $timeout -lt $max_wait ]; do
-  devices_output=$("$ANDROID_HOME"/platform-tools/adb devices)
+  devices_output=$(adb devices)
 
   echo "[${timeout}s] ADB Devices Output:"
   echo "$devices_output"
@@ -34,7 +34,7 @@ boot_completed=""
 timeout=0
 max_wait=120
 while [ "$boot_completed" != "1" ] && [ $timeout -lt $max_wait ]; do
-  boot_completed=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
+  boot_completed=$(adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
   echo "Boot status: '$boot_completed' after ${timeout}s"
   sleep 5
   timeout=$((timeout + 5))
