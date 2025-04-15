@@ -1,37 +1,6 @@
 #!/bin/bash
 set -x
 
-#echo "[1/5] Starting Appium server..."
-#appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > /app/appium_log.txt 2>&1 &
-#sleep 10
-#
-#echo "[2/5] Starting Android Emulator..."
-#"$ANDROID_HOME"/emulator/emulator -avd emu -no-audio -no-window -gpu swiftshader_indirect -no-snapshot -no-boot-anim -verbose &
-#
-#echo "[3/5] Waiting for Emulator to boot..."
-#sleep 30
-#boot_completed=""
-#until [[ "$boot_completed" == "1" ]]; do
-#  sleep 10
-#  boot_completed=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-#  echo "Current boot_completed value: '$boot_completed'"
-#done
-#echo "Emulator boot completed."
-#
-#echo "[4/5] Disabling hidden APIs and animations..."
-#"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps || true
-#"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_p_apps || true
-#"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy || true
-#
-#"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings put global window_animation_scale 0
-#"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings put global transition_animation_scale 0
-#"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings put global animator_duration_scale 0
-#
-#echo "[5/5] All set. Emulator & Appium are ready. Keeping container alive..."
-#tail -f /dev/null
-
-
-#!/bin/bash
 echo "[1/6] Starting Appium server..."
 appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > appium_log.txt 2>&1 &
 
@@ -40,29 +9,32 @@ echo "[2/6] Starting Android Emulator..."
   -no-audio -no-window -gpu swiftshader_indirect \
   -no-snapshot -no-boot-anim -verbose > /app/emulator_log.txt 2>&1 &
 
-echo "[3/6] Waiting for Emulator to boot..."
-#boot_completed=""
-#timeout=0
-#max_wait=300
-#while [[ $timeout -lt $max_wait ]] ; do
-#  sleep 2
-#  (( timeout += 2 ))
-#  boot_completed=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
-#  echo "Boot status: $boot_completed"
-#  if [ "$boot_completed" == "1" ]; then
-#      exit 0;
-#  fi
-#done
-echo "[4/6] Disabling Hidden API Policy Restrictions..."
-adb -P 5037 -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps
-adb -P 5037 -s emulator-5554 shell settings delete global hidden_api_policy_p_apps
-adb -P 5037 -s emulator-5554 shell settings delete global hidden_api_policy
+echo "[3/6] Waiting for device to appear..."
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 wait-for-device
 
-echo "[5/6] Disabling Animations..."
-adb shell settings put global window_animation_scale 0.0
-adb shell settings put global transition_animation_scale 0.0
-adb shell settings put global animator_duration_scale 0.0
+echo "[4/6] Waiting for Emulator to boot..."
+boot_completed=""
+timeout=0
+max_wait=300
+while [[ $timeout -lt $max_wait ]] ; do
+  sleep 2
+  (( timeout += 2 ))
+  boot_completed=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
+  echo "Boot status: $boot_completed (after $timeout seconds)"
+  if [ "$boot_completed" == "1" ]; then
+      break
+  fi
+done
 
-# Keep the container session active
-echo "[6/6] All set. Emulator & Appium are ready. Keeping container alive..."
+echo "[5/6] Disabling Hidden API Policy Restrictions..."
+adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps || true
+adb -s emulator-5554 shell settings delete global hidden_api_policy_p_apps || true
+adb -s emulator-5554 shell settings delete global hidden_api_policy || true
+
+echo "[6/6] Disabling Animations..."
+adb -s emulator-5554 shell settings put global window_animation_scale 0.0
+adb -s emulator-5554 shell settings put global transition_animation_scale 0.0
+adb -s emulator-5554 shell settings put global animator_duration_scale 0.0
+
+echo "All set. Emulator & Appium are ready. Keeping container alive..."
 tail -f /dev/null
