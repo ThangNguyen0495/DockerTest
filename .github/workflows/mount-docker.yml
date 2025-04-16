@@ -20,6 +20,9 @@ jobs:
         run: |
           docker ps -a
 
+      - name: Start SSH session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Check mounted folder
         run: |
           docker exec emulator-container ls -la /app

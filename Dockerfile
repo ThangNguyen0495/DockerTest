@@ -18,14 +18,8 @@ RUN apt-get install -y tar
 # Install unzip
 RUN apt-get install -y unzip
 
-# Install git
-RUN apt-get install -y git
-
 # Install sudo
 RUN apt-get install -y sudo
-
-# Install maven
-RUN apt-get install -y maven
 
 # Install libgl1
 RUN apt-get install -y libgl1
