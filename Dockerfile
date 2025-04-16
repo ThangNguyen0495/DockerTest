@@ -85,7 +85,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install
 RUN npm install -g appium && appium driver install uiautomator2
 
 # Run the scripts
-bash -c "\
+RUN bash -c "\
   echo '[1/6] Starting Android Emulator...' && \
   \$ANDROID_HOME/emulator/emulator -avd emu \
     -no-boot-anim -no-window -no-audio -gpu off -no-accel -verbose 2>&1 | tee emulator.log & \
