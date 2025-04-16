@@ -9,8 +9,7 @@ APPIUM="/usr/local/bin/appium"
 
 echo "[1/6] Starting Android Emulator..."
 nohup "$EMULATOR" -avd emu \
-  -no-audio -no-window -gpu swiftshader_indirect \
-  -no-snapshot -no-boot-anim -verbose > /dev/null 2>&1 &
+  -no-boot-anim -no-window -no-audio -gpu off -no-accel -verbose > emulator.log 2>&1 &
 
 echo "[2/6] Starting Appium server..."
 nohup "$APPIUM" -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > /dev/null 2>&1 &
