@@ -84,11 +84,39 @@ RUN ls -R $ANDROID_HOME/platform-tools
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 RUN npm install -g appium && appium driver install uiautomator2
 
-# Copy the Bash file into the container
-COPY entrypoint.sh /app/entrypoint.sh
-
-# Make the Bash file executable
-RUN chmod +x /app/entrypoint.sh
-
-# Run the Bash file when the container starts
-CMD ["bash", "/app/entrypoint.sh"]
+# Run the scripts
+CMD bash -c "\
+  echo 'Set environment ...' && \
+  echo '[1/6] Starting Android Emulator...' && \
+  nohup \$ANDROID_HOME/emulator/emulator -avd emu \
+    -no-boot-anim -no-window -no-audio -gpu off -no-accel -verbose > emulator.log 2>&1 & \
+  && echo '[2/6] Starting Appium server...' && \
+  nohup appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > /dev/null 2>&1 & \
+  && echo '[3/6] Waiting for emulator to appear in adb...' && \
+  timeout=0 && max_wait=120 && \
+  while [ \$timeout -lt \$max_wait ]; do \
+    devices_output=\$(${ANDROID_HOME}/platform-tools/adb devices); \
+    echo \"[\${timeout}s] adb devices Output:\"; echo \"\$devices_output\"; \
+    if [[ \"\$devices_output\" == *\"emulator-5554\"* ]]; then \
+      echo 'Emulator detected in adb!'; break; \
+    fi; \
+    echo 'Waiting for emulator to appear...'; \
+    sleep 5; timeout=\$((timeout + 5)); \
+  done && \
+  echo '[4/6] Waiting for emulator to complete boot...' && \
+  boot_completed=\"\" && timeout=0 && max_wait=120 && \
+  while [ \"\$boot_completed\" != \"1\" ] && [ \$timeout -lt \$max_wait ]; do \
+    boot_completed=\$(${ANDROID_HOME}/platform-tools/adb -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r'); \
+    echo \"Boot status: '\$boot_completed' after \${timeout}s\"; \
+    sleep 5; timeout=\$((timeout + 5)); \
+  done && \
+  echo '[5/6] Disabling Hidden API Policy Restrictions...' && \
+  ${ANDROID_HOME}/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps || true && \
+  ${ANDROID_HOME}/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_p_apps || true && \
+  ${ANDROID_HOME}/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy || true && \
+  echo '[6/6] Disabling Animations...' && \
+  ${ANDROID_HOME}/platform-tools/adb -s emulator-5554 shell settings put global window_animation_scale 0.0 && \
+  ${ANDROID_HOME}/platform-tools/adb -s emulator-5554 shell settings put global transition_animation_scale 0.0 && \
+  ${ANDROID_HOME}/platform-tools/adb -s emulator-5554 shell settings put global animator_duration_scale 0.0 && \
+  echo 'All set. Emulator & Appium are ready. Keeping container alive...' && \
+  tail -f /dev/null"
