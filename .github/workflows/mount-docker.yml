@@ -38,6 +38,7 @@ jobs:
         run: |
           docker exec emulator-container chmod +x /app/entrypoint.sh
           docker exec -d emulator-container bash /app/entrypoint.sh
+          docker logs -f emulator-container
 
       - name: Run Maven Install inside Container
         run: |
