@@ -1,6 +1,15 @@
 name: Run Android Emulator in Docker (Mount)
 on:
   workflow_dispatch:
+    inputs:
+      debug:
+        description: "Enable SSH debugging"
+        required: true
+        type: choice
+        options:
+          - ON
+          - OFF
+        default: "OFF"
 
 jobs:
   run-docker:
@@ -22,6 +31,12 @@ jobs:
 
       - name: Start SSH session
         uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event.inputs.debug == 'ON' }}
+        env:
+          TMATE_IDLE_MESSAGE: |
+            ⚠️ SSH Debugging Session Started
+            👉 SSH into the runner using the command above
+            💡 Type 'exit' to end the session and continue the workflow.
 
       - name: Check mounted folder
         run: |
@@ -29,7 +44,6 @@ jobs:
 
       - name: Run Maven Install inside Container
         run: |
-          sleep 60
           docker exec emulator-container bash -c "cd /app && mvn install -DskipTests"
 
       - name: Run Maven Tests inside Container
