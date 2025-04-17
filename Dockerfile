@@ -21,6 +21,9 @@ RUN apt-get install -y unzip
 # Install sudo
 RUN apt-get install -y sudo
 
+# Install maven
+RUN apt-get install -y maven
+
 # Install libgl1
 RUN apt-get install -y libgl1
 
