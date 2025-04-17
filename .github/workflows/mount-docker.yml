@@ -32,16 +32,11 @@ jobs:
           TMATE_IDLE_MESSAGE: |
             ⚠️ SSH Debugging Session Started
             👉 SSH into the runner using the command above
-            💡 Type 'exit' to end the session and continue the workflow.
-
-      - name: Start emulator and appium server
-        run: |
-          docker exec emulator-container chmod +x /app/entrypoint.sh
-          docker exec -d emulator-container bash /app/entrypoint.sh
-          docker logs -f emulator-container
+            💡 Type 'exit' to end the session and continue the workflow.r
 
       - name: Run Maven Install inside Container
         run: |
+          sleep 60
           docker exec emulator-container bash -c "cd /app && mvn install -DskipTests"
 
       - name: Run Maven Tests inside Container

@@ -20,8 +20,10 @@ jobs:
         run: |
           sleep 60
           docker logs emulator-container
+
       - name: Check ADB Devices
         run: |
           docker exec emulator-container adb devices
+          docker exec emulator-container adb mkdir /app
           docker exec emulator-container bash -c "cd /app && mvn install -DskipTests"
           docker exec emulator-container bash -c "cd /app && mvn test -DsuiteFile=test.xml"
