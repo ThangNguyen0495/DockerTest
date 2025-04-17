@@ -94,6 +94,7 @@ CMD bash -c "\
     -no-boot-anim -no-window -no-audio -gpu off -no-accel -verbose 2>&1 | tee emulator.log & \
   echo '[2/6] Starting Appium server...' && \
   appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security 2>&1 | tee appium.log & \
+  sleep 30 &&\
   echo '[3/6] Waiting for emulator to appear in adb...' && \
   timeout=0 && max_wait=120 && \
   while [ \$timeout -lt \$max_wait ]; do \
