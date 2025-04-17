@@ -37,7 +37,7 @@ jobs:
       - name: Start emulator and appium server
         run: |
           docker exec emulator-container chmod +x /app/entrypoint.sh
-          docker exec emulator-container bash /app/entrypoint.sh
+          docker exec -d emulator-container bash /app/entrypoint.sh
 
       - name: Run Maven Install inside Container
         run: |
