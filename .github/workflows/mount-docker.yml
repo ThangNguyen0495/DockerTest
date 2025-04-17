@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Maven Install inside Container
         run: |
-          sleep 60
+          sleep 120
           docker exec emulator-container bash -c "cd /app && mvn install -DskipTests"
 
       - name: Run Maven Tests inside Container
