@@ -19,7 +19,7 @@ jobs:
         run: |
           docker run -d --name emulator-container --privileged \
             -v ${{ github.workspace }}:/app \
-            thangnguyen0495/android-appium:latest
+            thangnguyen0495/android-appium:latest tail -f /dev/null
 
       - name: Verify Container Status
         run: |
@@ -34,9 +34,10 @@ jobs:
             👉 SSH into the runner using the command above
             💡 Type 'exit' to end the session and continue the workflow.
 
-      - name: Check mounted folder
+      - name: Start emulator and appium server
         run: |
-          docker exec emulator-container ls -la /app
+          docker exec emulator-container chmod +x /app/start-emulator.sh
+          docker exec emulator-container bash /app/start-emulator.sh
 
       - name: Run Maven Install inside Container
         run: |
