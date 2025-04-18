@@ -33,12 +33,10 @@ if [ $timeout -ge $max_wait ]; then
   exit 1
 fi
 
-sleep 10
-
 echo "[4/7] Disabling Hidden API Policy Restrictions..."
-"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps
-"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_p_apps
-"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps || true
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_p_apps || true
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy || true
 
 echo "[5/7] Disabling Animations..."
 "$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings put global window_animation_scale 0.0
