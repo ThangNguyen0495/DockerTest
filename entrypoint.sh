@@ -25,14 +25,14 @@ done
 
 echo "[4/6] Waiting for emulator to complete boot..."
 adb -s emulator-5554 root # Add root permission
-boot_completed=""
-
-# Waiting for emulator to complete boot without timeout
-while [ "$boot_completed" != "1" ]; do
-  boot_completed=$("$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
-  echo "Boot status: '$boot_completed'"
-  sleep 10
-done
+#boot_completed=""
+#
+## Waiting for emulator to complete boot without timeout
+#while [ "$boot_completed" != "1" ]; do
+#  boot_completed=$("$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
+#  echo "Boot status: '$boot_completed'"
+#  sleep 10
+#done
 
 echo "[5/6] Disabling Hidden API Policy Restrictions..."
 "$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps
