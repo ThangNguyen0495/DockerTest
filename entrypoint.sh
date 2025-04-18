@@ -10,34 +10,27 @@ echo "[2/6] Starting Appium server..."
 nohup appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > /dev/null 2>&1 &
 
 echo "[3/6] Waiting for emulator to appear in adb..."
-timeout=0
-max_wait=300
+devices_output=""
 
-while [ $timeout -lt $max_wait ]; do
-  devices_output=$("$ANDROID_HOME"/platform-tools/adb  devices)
+# Waiting for emulator to appear in adb without timeout
+while [[ "$devices_output" != *"emulator-5554"* ]]; do
+  devices_output=$("$ANDROID_HOME"/platform-tools/adb devices)
 
-  echo "[${timeout}s] adb devices Output:"
+  echo "adb devices Output:"
   echo "$devices_output"
-
-  if [[ "$devices_output" == *"emulator-5554"* ]]; then
-    echo "Emulator detected in adb!"
-    break
-  fi
 
   echo "Waiting for emulator to appear..."
   sleep 10
-  timeout=$((timeout + 10))
 done
 
 echo "[4/6] Waiting for emulator to complete boot..."
 boot_completed=""
-timeout=0
-max_wait=300
-while [ "$boot_completed" != "1" ] && [ $timeout -lt $max_wait ]; do
+
+# Waiting for emulator to complete boot without timeout
+while [ "$boot_completed" != "1" ]; do
   boot_completed=$("$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
-  echo "Boot status: '$boot_completed' after ${timeout}s"
+  echo "Boot status: '$boot_completed'"
   sleep 10
-  timeout=$((timeout + 10))
 done
 
 echo "[5/6] Disabling Hidden API Policy Restrictions..."
@@ -49,3 +42,5 @@ echo "[6/6] Disabling Animations..."
 "$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global window_animation_scale 0.0
 "$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global transition_animation_scale 0.0
 "$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global animator_duration_scale 0.0
+
+echo "Emulator & Appium are ready. Keeping container alive..."
