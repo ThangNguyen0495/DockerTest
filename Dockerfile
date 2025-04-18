@@ -38,9 +38,8 @@ RUN apt-get update && apt-get install -y libpulse0
 RUN rm -rf /var/lib/apt/lists/*
 
 # Cài Google Chrome mới nhất
-RUN sudo apt-get install libxss1 libappindicator1 libindicator7 && \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&\
-    sudo apt install ./google-chrome*.deb
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    dpkg -i google-chrome-stable_current_amd64.deb || apt-get install -fy
 
 # Thêm user để tránh lỗi sandbox
 RUN useradd -m chrome && \
