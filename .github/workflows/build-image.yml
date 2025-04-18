@@ -29,10 +29,11 @@ jobs:
         run: |
           docker push thangnguyen0495/chrome-selenium:latest
 
-      - name: Start Docker Container
+      - name: Start Docker Container with Volume Mount
         run: |
-          docker run -d --name chrome-container --privileged \
-            thangnguyen0495/chrome-selenium:latest
+          docker run -d --name emulator-container --privileged \
+            -v ${{ github.workspace }}:/app \
+            thangnguyen0495/chrome-selenium:latest tail -f /dev/null
 
       - name: Run Maven Install inside Container
         run: |
