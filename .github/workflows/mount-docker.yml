@@ -25,14 +25,17 @@ jobs:
         run: |
           docker ps -a
 
-      - name: Start SSH session
-        uses: mxschmitt/action-tmate@v3
+      - name: Setup tmate session (debugging)
         if: ${{ github.event.inputs.debug == 'ON' }}
-        env:
-          TMATE_IDLE_MESSAGE: |
-            ⚠️ SSH Debugging Session Started
-            👉 SSH into the runner using the command above
-            💡 Type 'exit' to end the session and continue the workflow.
+        run: |
+          sudo apt-get install -y tmate
+          tmate -S /tmp/tmate.sock new-session -d  # Start in detached mode
+          tmate -S /tmp/tmate.sock wait tmate-ready
+          echo "SSH connection string:"
+          tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
+          echo "Web connection:"
+          tmate -S /tmp/tmate.sock display -p '#{tmate_web}'
+        continue-on-error: true
 
       - name: Run Maven Install inside Container
         run: |
