@@ -12,6 +12,8 @@ public class CheckTest {
         pb.inheritIO();
         pb.start().waitFor();
 
+        LogManager.getLogger().info("Done. Start the test.");
+
         WebDriverManager.getAndroidDriver("emulator-5554", "");
     }
 
