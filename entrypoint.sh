@@ -23,25 +23,31 @@ while ! echo "$devices_output" | grep -q "emulator-5554[[:space:]]*device"; do
   sleep 10
 done
 
-echo "[4/6] Waiting for emulator to complete boot..."
-adb -s emulator-5554 root # Add root permission
-#boot_completed=""
-#
-## Waiting for emulator to complete boot without timeout
-#while [ "$boot_completed" != "1" ]; do
-#  boot_completed=$("$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
-#  echo "Boot status: '$boot_completed'"
-#  sleep 10
-#done
+echo "[4/6] Waiting for settings service to be available..."
+timeout=0
+max_wait=300
+
+while [ $timeout -lt $max_wait ]; do
+  service_status=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings list system)
+
+  if [[ -n "$service_status" ]]; then
+    echo "Settings service is available!"
+    break
+  fi
+
+  echo "Waiting for settings service to become available..."
+  sleep 10
+  timeout=$((timeout + 10))
+done
 
 echo "[5/6] Disabling Hidden API Policy Restrictions..."
-#"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps
-#"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings delete global hidden_api_policy_p_apps
-#"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings delete global hidden_api_policy
+"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps
+"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings delete global hidden_api_policy_p_apps
+"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings delete global hidden_api_policy
 
 echo "[6/6] Disabling Animations..."
-#"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global window_animation_scale 0.0
-#"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global transition_animation_scale 0.0
-#"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global animator_duration_scale 0.0
+"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global window_animation_scale 0.0
+"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global transition_animation_scale 0.0
+"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global animator_duration_scale 0.0
 
 echo "Emulator & Appium are ready. Keeping container alive..."
