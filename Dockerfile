@@ -41,12 +41,5 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     dpkg -i google-chrome-stable_current_amd64.deb || apt-get install -fy
 
-# Thêm user để tránh lỗi sandbox
-RUN useradd -m chrome && \
-    mkdir -p /home/chrome && chown -R chrome /home/chrome
-
-USER chrome
-WORKDIR /app
-
 # Chạy thử để verify
-CMD ["google-chrome-stable", "--version"]
+CMD ["bash"]
