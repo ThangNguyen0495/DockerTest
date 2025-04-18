@@ -4,7 +4,7 @@ set -e
 echo "Set environment ..."
 echo "[1/6] Starting Android Emulator..."
 nohup "$ANDROID_HOME/emulator/emulator" -avd emu \
-  -no-boot-anim -no-window -no-audio -gpu off -no-accel -verbose > /dev/null 2>&1 &
+  -no-boot-anim -no-window -no-audio -gpu off -verbose > /dev/null 2>&1 &
 
 echo "[2/6] Starting Appium server..."
 nohup appium -a 0.0.0.0 -p 4723 -pa /wd/hub --allow-cors --relaxed-security > /dev/null 2>&1 &
