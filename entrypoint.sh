@@ -28,17 +28,23 @@ timeout=0
 max_wait=300
 
 while [ $timeout -lt $max_wait ]; do
-  service_status=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings list system)
+  # Check if 'settings' service is registered
+  services=$("$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell service list)
 
-  if [[ -n "$service_status" ]]; then
-    echo "Settings service is available!"
+  if echo "$services" | grep -q "settings"; then
+    echo "'settings' service is available!"
     break
   fi
 
-  echo "Waiting for settings service to become available..."
-  sleep 10
-  timeout=$((timeout + 10))
+  echo "Waiting for 'settings' service to become available... (${timeout}s)"
+  sleep 5
+  timeout=$((timeout + 5))
 done
+
+if [ $timeout -ge $max_wait ]; then
+  echo "Timeout waiting for settings service!"
+  exit 1
+fi
 
 echo "[5/6] Disabling Hidden API Policy Restrictions..."
 "$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps
