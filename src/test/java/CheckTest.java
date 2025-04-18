@@ -7,14 +7,16 @@ public class CheckTest {
     @Test
     void test() throws IOException, URISyntaxException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder("bash", "entrypoint.sh");
-        pb.inheritIO(); // to print logs
-        Process process = pb.start();
-        process.waitFor();
+        pb.inheritIO();
+        pb.start().waitFor();
+
         WebDriverManager.getAndroidDriver("emulator-5554", "");
     }
 
-//    @Test
-//    void test_actions() throws MalformedURLException, URISyntaxException {
-//        WebDriverManager.getAndroidDriver("emulator-5554", "");
+//    @AfterTest
+//    void tearDown() throws IOException {
+//        ProcessBuilder pb = new ProcessBuilder("bash", "-c", "pkill -f emulator && pkill -f appium");
+//        pb.inheritIO();
+//        pb.start();
 //    }
 }

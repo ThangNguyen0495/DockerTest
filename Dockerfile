@@ -87,13 +87,7 @@ RUN ls -R $ANDROID_HOME/platform-tools
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 RUN npm install -g appium && appium driver install uiautomator2
 
-# Copy the Bash file into the container
-COPY entrypoint.sh /app/entrypoint.sh
-
-# Make the Bash file executable
-RUN chmod +x /app/entrypoint.sh
-
 # Run the Bash file when the container starts
-CMD ["bash", "/app/entrypoint.sh"]
+CMD ["tail", "-f", "/dev/null"]
 
 

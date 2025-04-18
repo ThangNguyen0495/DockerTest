@@ -35,8 +35,6 @@ timeout=0
 max_wait=300
 while [ "$boot_completed" != "1" ] && [ $timeout -lt $max_wait ]; do
   boot_completed=$("$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell getprop sys.boot_completed | tr -d '\r')
-  "$ANDROID_HOME"/platform-tools/adb kill-server
-  "$ANDROID_HOME"/platform-tools/adb start-server
   echo "Boot status: '$boot_completed' after ${timeout}s"
   sleep 10
   timeout=$((timeout + 10))
@@ -51,6 +49,3 @@ echo "[6/6] Disabling Animations..."
 "$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global window_animation_scale 0.0
 "$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global transition_animation_scale 0.0
 "$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global animator_duration_scale 0.0
-
-echo "All set. Emulator & Appium are ready. Keeping container alive..."
-tail -f /dev/null
