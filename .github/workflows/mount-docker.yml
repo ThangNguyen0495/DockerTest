@@ -31,6 +31,12 @@ jobs:
           tmate -S /tmp/tmate.sock display -p '#{tmate_web}'
         continue-on-error: true
 
+      - name: Start emulator and appium by bash scripts
+        run: |
+          docker exec emulator-container chmod +x /app/entrypoint.sh
+          docker exec emulator-container /app/entrypoint.sh
+          docker logs -f emulator-container
+
       - name: Run Maven Install inside Container
         run: |
           docker exec emulator-container bash -c "cd /app && mvn install -DskipTests"
