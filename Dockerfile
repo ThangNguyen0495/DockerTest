@@ -1,93 +1,25 @@
-# Use Ubuntu 22.04
 FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update apt cache
-RUN apt-get update
+# Cài các dependency cơ bản
+RUN apt-get update && apt-get install -y \
+    wget unzip curl gnupg2 ca-certificates fonts-liberation libappindicator3-1 libasound2 libatk-bridge2.0-0 \
+    libnspr4 libnss3 libxss1 libxcomposite1 libxcursor1 libxdamage1 libxi6 libxtst6 libgbm-dev libxrandr2 xdg-utils \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install wget
-RUN apt-get install -y wget
+# Cài Google Chrome mới nhất
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" \
+    > /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && apt-get install -y google-chrome-stable
 
-# Install curl
-RUN apt-get install -y curl
+# Thêm user để tránh lỗi sandbox
+RUN useradd -m chrome && \
+    mkdir -p /home/chrome && chown -R chrome /home/chrome
 
-# Install tar
-RUN apt-get install -y tar
+USER chrome
+WORKDIR /app
 
-# Install unzip
-RUN apt-get install -y unzip
-
-# Install sudo
-RUN apt-get install -y sudo
-
-# Install maven
-RUN apt-get install -y maven
-
-# Install libgl1
-RUN apt-get install -y libgl1
-
-# Install mesa-utils (optional, can be removed if not needed)
-RUN apt-get install -y mesa-utils
-
-# Install libgl1-mesa-dri (can be replaced with libgl1-mesa-glx if needed)
-RUN apt-get install -y libgl1-mesa-dri
-
-RUN apt-get update && apt-get install -y libpulse0
-
-# Clean up apt cache to reduce image size
-RUN rm -rf /var/lib/apt/lists/*
-
-# Install Java 22
-RUN wget -q https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz -O openjdk.tar.gz \
-    && tar -xvf openjdk.tar.gz && mv jdk-22.0.1 /opt/
-
-ENV JAVA_HOME=/opt/jdk-22.0.1
-ENV PATH=$JAVA_HOME/bin:$PATH
-
-# Set Android SDK environment
-ENV ANDROID_HOME=/root/android-sdk
-ENV ANDROID_SDK_ROOT=/root/android-sdk
-ENV CMDLINE_TOOLS=$ANDROID_HOME/cmdline-tools
-ENV PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
-
-# Download Android SDK CLI
-RUN mkdir -p $CMDLINE_TOOLS/latest && cd $CMDLINE_TOOLS/latest && \
-    wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O cmdline-tools.zip && \
-    unzip cmdline-tools.zip && rm cmdline-tools.zip && mv cmdline-tools/* . && rm -rf cmdline-tools
-
-# Accept licenses and install SDK components
-RUN yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
-RUN $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
-    "platform-tools" \
-    "platforms;android-35" \
-    "build-tools;35.0.0" \
-    "system-images;android-35;google_apis;x86_64" \
-    "emulator"
-
-# Create emulator (Pixel 3 as example)
-RUN echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n emu -k "system-images;android-35;google_apis;x86_64" --device "pixel_3"
-
-# Customize AVD configuration
-RUN AVD_PATH="$HOME/.android/avd/emu.avd/config.ini" && \
-    if [ -f "$AVD_PATH" ]; then \
-        echo "Modifying emulator config..." && \
-        echo "hw.cpu.ncore=4" >> "$AVD_PATH" && \
-        echo "hw.ramSize=4096" >> "$AVD_PATH" && \
-        echo "hw.heapSize=512" >> "$AVD_PATH" && \
-        echo "disk.dataPartition.size=6G" >> "$AVD_PATH" && \
-        echo "hw.keyboard=yes" >> "$AVD_PATH"; \
-    else \
-        echo "AVD not found! Skipping configuration." && exit 1; \
-    fi
-
-RUN ls -R $ANDROID_HOME/platform-tools
-
-# Install Node.js v20 + Appium
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
-RUN npm install -g appium && appium driver install uiautomator2
-
-# Run the Bash file when the container starts
-CMD ["tail", "-f", "/dev/null"]
-
-
+# Chạy thử để verify
+CMD ["google-chrome-stable", "--version"]

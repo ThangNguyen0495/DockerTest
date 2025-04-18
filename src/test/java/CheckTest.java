@@ -7,6 +7,6 @@ public class CheckTest {
     @Test
     void test() throws IOException, URISyntaxException {
 
-        WebDriverManager.getAndroidDriver("emulator-5554", "");
+        WebDriverManager.getWebDriver();
     }
 }

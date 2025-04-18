@@ -3,9 +3,17 @@ import io.appium.java_client.android.options.UiAutomator2Options;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.ios.options.XCUITestOptions;
 import org.apache.logging.log4j.LogManager;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.safari.SafariDriver;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -80,6 +88,26 @@ public class WebDriverManager {
         }
 
         LogManager.getLogger().info("IOS app bundle ID: {}", appBundleId);
+        return driver;
+    }
+
+    /**
+     * Initializes and returns a WebDriver instance for the specified browser.
+     *
+     * @return An instance of WebDriver for the specified browser.
+     */
+    public static WebDriver getWebDriver() {
+        WebDriver driver;
+        io.github.bonigarcia.wdm.WebDriverManager.chromedriver().setup();
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--disable-site-isolation-trials");
+        chromeOptions.addArguments("--disable-dev-shm-usage");
+        chromeOptions.addArguments("--remote-allow-origins=*");
+        chromeOptions.addArguments("--no-sandbox");
+        driver = new ChromeDriver(chromeOptions);
+
+        driver.manage().window().maximize();
         return driver;
     }
 }

@@ -31,13 +31,13 @@ jobs:
 
       - name: Start Docker Container
         run: |
-          docker run -d --name emulator-container --privileged \
-            thangnguyen0495/android-appium:latest
+          docker run -d --name chrome-container --privileged \
+            thangnguyen0495/chrome-selenium:latest
 
-      - name: Wait for Emulator to Start
+      - name: Run Maven Install inside Container
         run: |
-          docker logs emulator-container
+          docker exec chrome-container bash -c "cd /app && mvn install -DskipTests"
 
-      - name: Check ADB Devices
+      - name: Run Maven Tests inside Container
         run: |
-          docker exec emulator-container adb devices
+          docker exec chrome-container bash -c "cd /app && mvn test -DsuiteFile=test.xml"
