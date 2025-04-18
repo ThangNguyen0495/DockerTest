@@ -13,7 +13,7 @@ echo "[3/6] Waiting for emulator to appear in adb..."
 devices_output=""
 
 # Waiting for emulator to appear in adb without timeout
-while [[ "$devices_output" != *"emulator-5554"* ]]; do
+while ! echo "$devices_output" | grep -q "emulator-5554[[:space:]]*device"; do
   devices_output=$("$ANDROID_HOME"/platform-tools/adb devices)
 
   echo "adb devices Output:"
@@ -24,6 +24,7 @@ while [[ "$devices_output" != *"emulator-5554"* ]]; do
 done
 
 echo "[4/6] Waiting for emulator to complete boot..."
+adb -s emulator-5554 root # Add root permission
 boot_completed=""
 
 # Waiting for emulator to complete boot without timeout
