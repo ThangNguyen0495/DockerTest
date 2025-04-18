@@ -87,8 +87,6 @@ RUN ls -R $ANDROID_HOME/platform-tools
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
 RUN npm install -g appium && appium driver install uiautomator2
 
-# Run the scripts
-
 # Copy the Bash file into the container
 COPY entrypoint.sh /app/entrypoint.sh
 

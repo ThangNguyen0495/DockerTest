@@ -32,10 +32,11 @@ jobs:
           TMATE_IDLE_MESSAGE: |
             ⚠️ SSH Debugging Session Started
             👉 SSH into the runner using the command above
-            💡 Type 'exit' to end the session and continue the workflow.r
+            💡 Type 'exit' to end the session and continue the workflow.
 
       - name: Run Maven Install inside Container
         run: |
+          sleep 60
           docker exec emulator-container bash -c "cd /app && mvn install -DskipTests"
 
       - name: Run Maven Tests inside Container
