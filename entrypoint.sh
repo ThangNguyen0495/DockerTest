@@ -35,13 +35,13 @@ adb -s emulator-5554 root # Add root permission
 #done
 
 echo "[5/6] Disabling Hidden API Policy Restrictions..."
-"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps
-"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings delete global hidden_api_policy_p_apps
-"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings delete global hidden_api_policy
+#"$ANDROID_HOME"/platform-tools/adb -s emulator-5554 shell settings delete global hidden_api_policy_pre_p_apps
+#"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings delete global hidden_api_policy_p_apps
+#"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings delete global hidden_api_policy
 
 echo "[6/6] Disabling Animations..."
-"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global window_animation_scale 0.0
-"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global transition_animation_scale 0.0
-"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global animator_duration_scale 0.0
+#"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global window_animation_scale 0.0
+#"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global transition_animation_scale 0.0
+#"$ANDROID_HOME"/platform-tools/adb  -s emulator-5554 shell settings put global animator_duration_scale 0.0
 
 echo "Emulator & Appium are ready. Keeping container alive..."
