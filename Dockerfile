@@ -2,29 +2,49 @@ FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y \
-  wget \
-  curl \
-  gnupg \
-  unzip \
-  fonts-liberation \
-  xdg-utils \
-  libappindicator3-1 \
-  libasound2 \
-  libatk-bridge2.0-0 \
-  libatk1.0-0 \
-  libcups2 \
-  libdbus-1-3 \
-  libgdk-pixbuf2.0-0 \
-  libnspr4 \
-  libnss3 \
-  libx11-xcb1 \
-  libxcomposite1 \
-  libxdamage1 \
-  libxrandr2 \
-  tar \
-  --no-install-recommends
+# Update apt cache
+RUN apt-get update
 
+# Install wget
+RUN apt-get install -y wget
+
+# Install curl
+RUN apt-get install -y curl
+
+# Install tar
+RUN apt-get install -y tar
+
+# Install unzip
+RUN apt-get install -y unzip
+
+# Install sudo
+RUN apt-get install -y sudo
+
+# Install maven
+RUN apt-get install -y maven
+
+# Install libgl1
+RUN apt-get install -y libgl1
+
+RUN apt-get install -y fonts-liberation
+RUN apt-get install -y xdg-utils
+RUN apt-get install -y libappindicator3-1
+RUN apt-get install -y libasound2
+RUN apt-get install -y libatk-bridge2.0-0
+RUN apt-get install -y libatk1.0-0
+RUN apt-get install -y libcups2
+RUN apt-get install -y libdbus-1-3
+RUN apt-get install -y libgdk-pixbuf2.0-0
+RUN apt-get install -y libnspr4
+RUN apt-get install -y libnss3
+RUN apt-get install -y libx11-xcb1
+RUN apt-get install -y libxcomposite1
+RUN apt-get install -y libxdamage1
+RUN apt-get install -y libxrandr2
+
+
+# Clean up apt cache to reduce image size
+RUN rm -rf /var/lib/apt/lists/*
 
 # Install Java 22
 RUN wget -q https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz -O openjdk.tar.gz \
