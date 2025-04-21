@@ -98,14 +98,11 @@ public class WebDriverManager {
      */
     public static WebDriver getWebDriver() {
         WebDriver driver;
-        io.github.bonigarcia.wdm.WebDriverManager.chromedriver().setup();
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--headless");
-        chromeOptions.addArguments("--disable-site-isolation-trials");
-        chromeOptions.addArguments("--disable-dev-shm-usage");
-        chromeOptions.addArguments("--remote-allow-origins=*");
-        chromeOptions.addArguments("--no-sandbox");
-        driver = new ChromeDriver(chromeOptions);
+        io.github.bonigarcia.wdm.WebDriverManager.firefoxdriver().setup();
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        firefoxOptions.addArguments("--headless");
+        firefoxOptions.addArguments("--no-sandbox");
+        driver = new FirefoxDriver(firefoxOptions);
 
         driver.manage().window().maximize();
         return driver;
