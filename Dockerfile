@@ -41,6 +41,7 @@ RUN apt-get install -y libx11-xcb1
 RUN apt-get install -y libxcomposite1
 RUN apt-get install -y libxdamage1
 RUN apt-get install -y libxrandr2
+RUN apt-get install -y libgbm1
 
 
 # Clean up apt cache to reduce image size
