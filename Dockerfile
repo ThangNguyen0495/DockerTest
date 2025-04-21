@@ -28,7 +28,7 @@ RUN #apt-get install -y libgl1
 
 RUN apt-get install -y fonts-liberation
 RUN apt-get install -y xdg-utils
-RUN apt-get install -y ibcurl3-gnutls
+RUN apt-get install -y libcurl3-gnutls
 RUN apt-get install -y libcurl3-nss
 RUN apt-get install -y libcurl4
 RUN apt-get install -y libcurl3
