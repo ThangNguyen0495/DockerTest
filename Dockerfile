@@ -31,7 +31,6 @@ RUN apt-get install -y xdg-utils
 RUN apt-get install -y libcurl3-gnutls
 RUN apt-get install -y libcurl3-nss
 RUN apt-get install -y libcurl4
-RUN apt-get install -y libcurl3
 #RUN apt-get install -y libcups2
 #RUN apt-get install -y libdbus-1-3
 #RUN apt-get install -y libgdk-pixbuf2.0-0
