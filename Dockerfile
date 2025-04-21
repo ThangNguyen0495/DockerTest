@@ -9,13 +9,13 @@ RUN apt-get update
 RUN apt-get install -y wget
 
 # Install curl
-RUN apt-get install -y curl
+RUN #apt-get install -y curl
 
 # Install tar
 RUN apt-get install -y tar
 
 # Install unzip
-RUN apt-get install -y unzip
+RUN #apt-get install -y unzip
 
 # Install sudo
 RUN apt-get install -y sudo
@@ -24,23 +24,23 @@ RUN apt-get install -y sudo
 RUN apt-get install -y maven
 
 # Install libgl1
-RUN apt-get install -y libgl1
+RUN #apt-get install -y libgl1
 
 RUN apt-get install -y fonts-liberation
 RUN apt-get install -y xdg-utils
-RUN apt-get install -y libappindicator3-1
-RUN apt-get install -y libasound2
-RUN apt-get install -y libatk-bridge2.0-0
-RUN apt-get install -y libatk1.0-0
-RUN apt-get install -y libcups2
-RUN apt-get install -y libdbus-1-3
-RUN apt-get install -y libgdk-pixbuf2.0-0
-RUN apt-get install -y libnspr4
-RUN apt-get install -y libnss3
-RUN apt-get install -y libx11-xcb1
-RUN apt-get install -y libxcomposite1
-RUN apt-get install -y libxdamage1
-RUN apt-get install -y libxrandr2
+#RUN apt-get install -y libappindicator3-1
+#RUN apt-get install -y libasound2
+#RUN apt-get install -y libatk-bridge2.0-0
+#RUN apt-get install -y libatk1.0-0
+#RUN apt-get install -y libcups2
+#RUN apt-get install -y libdbus-1-3
+#RUN apt-get install -y libgdk-pixbuf2.0-0
+#RUN apt-get install -y libnspr4
+#RUN apt-get install -y libnss3
+#RUN apt-get install -y libx11-xcb1
+#RUN apt-get install -y libxcomposite1
+#RUN apt-get install -y libxdamage1
+#RUN apt-get install -y libxrandr2
 RUN apt-get install -y libgbm1
 
 
