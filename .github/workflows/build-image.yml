@@ -22,23 +22,23 @@ jobs:
       # 🔹 Build Docker Image and Tag It
       - name: Build Docker Image
         run: |
-          docker build -t thangnguyen0495/firefox-selenium:latest .
+          docker build -t thangnguyen0495/browser-selenium:latest .
 
       # 🔹 Push Docker Image to Docker Hub
       - name: Push Docker Image
         run: |
-          docker push thangnguyen0495/firefox-selenium:latest
+          docker push thangnguyen0495/browser-selenium:latest
 
       - name: Start Docker Container with Volume Mount
         run: |
-          docker run -d --name firefox-container --privileged \
+          docker run -d --name browser-container --privileged \
             -v ${{ github.workspace }}:/app \
-            thangnguyen0495/firefox-selenium:latest
+            thangnguyen0495/browser-selenium:latest
 
       - name: Run Maven Install inside Container
         run: |
-          docker exec firefox-container bash -c "cd /app && mvn install -DskipTests"
+          docker exec browser-container bash -c "cd /app && mvn install -DskipTests"
 
       - name: Run Maven Tests inside Container
         run: |
-          docker exec firefox-container bash -c "cd /app && mvn test -DsuiteFile=test.xml"
+          docker exec browser-container bash -c "cd /app && mvn test -DsuiteFile=test.xml"
