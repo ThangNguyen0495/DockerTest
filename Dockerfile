@@ -10,6 +10,13 @@ RUN apt-get update && \
     apt-get install -y firefox-esr && \
     rm -rf /var/lib/apt/lists/*
 
+RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg && \
+    install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/ && \
+    sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge.list' && \
+    rm microsoft.gpg && \
+    apt-get install -y microsoft-edge-stable && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install OpenJDK 22
 RUN wget -q https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz -O openjdk.tar.gz && \
     tar -xf openjdk.tar.gz && mv jdk-22.0.1 /opt/ && rm openjdk.tar.gz
