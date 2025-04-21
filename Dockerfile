@@ -46,7 +46,7 @@ ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Cài Google Chrome mới nhất
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    dpkg -i google-chrome-stable_current_amd64.deb || apt-get install -fy
+    sudo dpkg -i google-chrome-stable_current_amd64.deb
 
 # Chạy thử để verify
 CMD ["bash"]
