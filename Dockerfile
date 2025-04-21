@@ -23,5 +23,5 @@ RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd6
     rm google-chrome-stable_current_amd64.deb && \
     rm -rf /var/lib/apt/lists/*
 
-# Verify Java and Chrome versions
-CMD java -version && google-chrome --version && bash
+# Run the Bash file when the container starts
+CMD ["tail", "-f", "/dev/null"]

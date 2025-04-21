@@ -33,7 +33,7 @@ jobs:
         run: |
           docker run -d --name chrome-container --privileged \
             -v ${{ github.workspace }}:/app \
-            thangnguyen0495/chrome-selenium:latest tail -f /dev/null
+            thangnguyen0495/chrome-selenium:latest
 
       - name: Run Maven Install inside Container
         run: |
