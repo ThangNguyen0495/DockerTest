@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Update apt cache and install base tools
 RUN apt-get update && \
-    apt-get install -y wget tar && \
+    apt-get install -y wget tar curl gpg && \
     apt-get install -y maven && \
 #    apt-get install -y fonts-liberation xdg-utils libcurl3-gnutls libcurl3-nss libcurl4 libgbm1 && \
     apt-get install -y firefox-esr && \
