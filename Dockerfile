@@ -28,10 +28,10 @@ RUN #apt-get install -y libgl1
 
 RUN apt-get install -y fonts-liberation
 RUN apt-get install -y xdg-utils
-#RUN apt-get install -y libappindicator3-1
-#RUN apt-get install -y libasound2
-#RUN apt-get install -y libatk-bridge2.0-0
-#RUN apt-get install -y libatk1.0-0
+RUN apt-get install -y ibcurl3-gnutls
+RUN apt-get install -y libcurl3-nss
+RUN apt-get install -y libcurl4
+RUN apt-get install -y libcurl3
 #RUN apt-get install -y libcups2
 #RUN apt-get install -y libdbus-1-3
 #RUN apt-get install -y libgdk-pixbuf2.0-0
