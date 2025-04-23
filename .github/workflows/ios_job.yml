@@ -33,3 +33,32 @@ jobs:
           echo 'iosUDID=${{ env.DEVICE_UDID }}' >> src/main/resources/config.properties
           mvn install -DskipTests   # Install dependencies without running tests
           mvn test -DsuiteFile=test.xml  # Run tests with a specific suite file
+
+        continue-on-error: true
+
+      - name: Setup tmate session
+        run: |
+          brew install tmate
+
+          # Create a new detached tmate session
+          tmate -S /tmp/tmate.sock new-session -d
+          tmate -S /tmp/tmate.sock wait tmate-ready
+
+          # Get connection details
+          echo "✅ SSH connection string:"
+          tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
+
+          echo "🌐 Web connection (read-only):"
+          tmate -S /tmp/tmate.sock display -p '#{tmate_web}'
+
+          echo "🕒 Session is active. Leave this running until you're done debugging."
+
+          # Keep session alive and check if the session is still running
+          while true; do
+            sleep 1800
+            # Check if tmate session is still alive by checking the socket file
+            if ! tmux -L /tmp/tmate.sock has-session 2>/dev/null; then
+              echo "🛑 tmate session is no longer alive. Exiting..."
+              break
+            fi
+          done
