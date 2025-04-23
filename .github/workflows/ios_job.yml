@@ -10,20 +10,26 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      # Step 1: Checkout code from repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup env
+      # Step 2: Setup environment for iOS testing
+      - name: Setup iOS Testing Environment
         run: |
+          # Grant execute permission to the setup script and run it
           chmod +x ./automated_ios_test_setup.sh
-          ./automated_ios_test_setup.sh "iPhone 15" 17.5
+          ./automated_ios_test_setup.sh "iPhone 15" 17.5  # Customize with iPhone and iOS version
+          
+          # Fetch UDID of the booted simulator (first available)
           DEVICE_UDID=$(xcrun simctl list devices | grep "(Booted)" | awk -F '[()]' '{print $2}' | head -n1)
+          
+          # Set the UDID as an environment variable for the following steps
           echo "DEVICE_UDID=$DEVICE_UDID" >> $GITHUB_ENV
 
+      # Step 3: Setup tmate session for debugging (interactive session)
       - name: Setup tmate session
         run: |
-          echo 'iosUDID=${{ DEVICE_UDID }}' >> src/main/resources/config.properties
-          mvn install -DskipTests
-          mvn test -DsuiteFile=test.xml
-          
-
+          echo 'iosUDID=${{ env.DEVICE_UDID }}' >> src/main/resources/config.properties
+          mvn install -DskipTests   # Install dependencies without running tests
+          mvn test -DsuiteFile=test.xml  # Run tests with a specific suite file
