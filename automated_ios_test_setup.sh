@@ -26,6 +26,7 @@ curl -s "https://get.sdkman.io" | bash
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk install java "$JAVA_VERSION"-open
 sdk use java "$JAVA_VERSION"-open
+echo "$ANDROID_HOME"
 echo -e "${GREEN}Java $JAVA_VERSION installed via SDKMAN${NC}"
 
 echo -e "${RED_BOLD}[4/10] Installing Appium globally...${NC}"
