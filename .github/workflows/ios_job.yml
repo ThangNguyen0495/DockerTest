@@ -1,0 +1,29 @@
+name: Access Environment-Specific Secret
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  use-env-secret:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup env
+        run: |
+          chmod +x ./automated_ios_test_setup.sh
+          ./automated_ios_test_setup.sh "iPhone 15" 17.5
+          DEVICE_UDID=$(xcrun simctl list devices | grep "(Booted)" | awk -F '[()]' '{print $2}' | head -n1)
+          echo "DEVICE_UDID=$DEVICE_UDID" >> $GITHUB_ENV
+
+      - name: Setup tmate session
+        run: |
+          echo 'iosUDID=${{ DEVICE_UDID }}' >> src/main/resources/config.properties
+          mvn install -DskipTests
+          mvn test -DsuiteFile=test.xml
+          
+

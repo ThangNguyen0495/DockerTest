@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 public class CheckTest {
     @Test
     void test() throws IOException, URISyntaxException {
-
-        WebDriverManager.getWebDriver();
+        String udid = PropertiesUtils.getIOSSimulatorUdid();
+        WebDriverManager.getIOSDriver(udid, "");
     }
 }
