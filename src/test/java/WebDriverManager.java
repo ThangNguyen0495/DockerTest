@@ -15,6 +15,7 @@ import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.safari.SafariDriver;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -68,7 +69,9 @@ public class WebDriverManager {
      * @throws MalformedURLException If the URL is malformed.
      * @throws URISyntaxException    If the URI syntax is incorrect.
      */
-    public static IOSDriver getIOSDriver(String udid, String appPath) throws MalformedURLException, URISyntaxException {
+    public static IOSDriver getIOSDriver(String udid, String appPath) throws IOException, URISyntaxException {
+        String iosAppPath = System.getProperty("user.dir") + "/app/app.zip";
+        FileDownloadHelper.downloadFile("https://www.dropbox.com/scl/fi/n33q249677dl381duiqt5/GoSeller_STAG_v4.6.2.zip?rlkey=vro5hmpntehemj8ucz563qzur&st=oqeu6cjy&dl=1", iosAppPath);
         XCUITestOptions options = new XCUITestOptions();
         options.setCapability("appium:udid", udid);
         options.setCapability("platformName", "iOS");
@@ -76,7 +79,7 @@ public class WebDriverManager {
         options.setCapability("appium:wdaLaunchTimeout", 500_000);
         options.setCapability("appium:wdaConnectionTimeout", 500_000);
         options.setCapability("appium:automationName", "XCUITest");
-        options.setCapability("appium:app", appPath);
+        options.setCapability("appium:app", iosAppPath);
 
         IOSDriver driver = new IOSDriver(new URI(url).toURL(), options);
         LogEntries serverLogs = driver.manage().logs().get(LogType.SERVER);
