@@ -23,7 +23,8 @@ jobs:
           # Set the UDID as an environment variable for the following steps
           echo "DEVICE_UDID=$DEVICE_UDID" >> $GITHUB_ENV
           
-          sdk use java 22-open
+          echo "JAVA_HOME=$HOME/.sdkman/candidates/java/22-open" >> $GITHUB_ENV
+          echo "PATH=$HOME/.sdkman/candidates/java/22-open/bin:$PATH" >> $GITHUB_ENV
         
           echo $JAVA_HOME
           
