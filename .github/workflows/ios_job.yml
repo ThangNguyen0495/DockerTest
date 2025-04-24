@@ -1,3 +1,4 @@
+
 name: Access Environment-Specific Secret
 
 on:
@@ -10,50 +11,47 @@ jobs:
     runs-on: macos-latest
 
     steps:
+      # Step 1: Checkout code from repository
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Step 2: Setup environment for iOS testing
       - name: Setup iOS Testing Environment
         run: |
           # Grant execute permission to the setup script and run it
           chmod +x ./automated_ios_test_setup.sh
-          ./automated_ios_test_setup.sh "Iphone 15" 17.5 22 > /dev/null
+          ./automated_ios_test_setup.sh 
+          
+          echo "JAVA_HOME=$HOME/.sdkman/candidates/java/22-open" >> $GITHUB_ENV
+          echo "PATH="$JAVA_HOME/bin:$PATH"" >> $GITHUB_ENV
+          
+          # Fetch UDID of the booted simulator (first available)
           DEVICE_UDID=$(xcrun simctl list devices | grep "(Booted)" | awk -F '[()]' '{print $2}' | head -n1)
           
           # Set the UDID as an environment variable for the following steps
           echo "DEVICE_UDID=$DEVICE_UDID" >> $GITHUB_ENV
-         
+   
 
-        continue-on-error: true
-
-      - name: Run test
+      - name: Start test
         run: |
-          echo "JAVA_HOME=$HOME/.sdkman/candidates/java/22-open" >> $GITHUB_ENV
-          echo "PATH="$JAVA_HOME/bin:$PATH"" >> $GITHUB_ENV
-          
-          echo $JAVA_HOME
-          
+          echo "$JAVA_HOME"
           echo "iosUDID=$DEVICE_UDID" >> src/main/resources/config.properties
           mvn install -DskipTests > /dev/null
-          mvn test -DsuiteFile=test.xml 
+          mvn test -DsuiteFile=test.xml  # Run tests with a specific suite file
+        continue-on-error: true
 
       - name: Setup tmate session
         run: |
           brew install tmate
-
           # Create a new detached tmate session
           tmate -S /tmp/tmate.sock new-session -d
           tmate -S /tmp/tmate.sock wait tmate-ready
-
           # Get connection details
           echo "✅ SSH connection string:"
           tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
-
           echo "🌐 Web connection (read-only):"
           tmate -S /tmp/tmate.sock display -p '#{tmate_web}'
-
           echo "🕒 Session is active. Leave this running until you're done debugging."
-
           # Keep session alive and check if the session is still running
           while true; do
             sleep 1800
