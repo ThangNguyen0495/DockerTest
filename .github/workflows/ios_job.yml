@@ -19,7 +19,7 @@ jobs:
         run: |
           # Grant execute permission to the setup script and run it
           chmod +x ./automated_ios_test_setup.sh
-          ./automated_ios_test_setup.sh "iPhone 15" 17.5  # Customize with iPhone and iOS version
+          ./automated_ios_test_setup.sh
           
           # Fetch UDID of the booted simulator (first available)
           DEVICE_UDID=$(xcrun simctl list devices | grep "(Booted)" | awk -F '[()]' '{print $2}' | head -n1)
