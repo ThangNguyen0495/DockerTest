@@ -25,7 +25,7 @@ echo -e "${RED_BOLD}[3/10] Installing Java via SDKMAN...${NC}"
 curl -s "https://get.sdkman.io" | bash
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk install java "$JAVA_VERSION"-open
-sdk use java "$JAVA_VERSION"-open
+sed -i '' '/JAVA_HOME/d' ~/.bashrc && echo "export JAVA_HOME=\"$HOME/.sdkman/candidates/java/$JAVA_VERSION-open\"" >> ~/.bashrc
 echo "$JAVA_HOME"
 echo -e "${GREEN}Java $JAVA_VERSION installed via SDKMAN${NC}"
 
