@@ -28,9 +28,8 @@ jobs:
 
       - name: Run test
         run: |
-          
           echo "JAVA_HOME=$HOME/.sdkman/candidates/java/22-open" >> $GITHUB_ENV
-          echo "PATH=$HOME/.sdkman/candidates/java/22-open/bin:$PATH" >> $GITHUB_ENV
+          echo "PATH="$JAVA_HOME/bin:$PATH"" >> $GITHUB_ENV
           
           echo $JAVA_HOME
           
