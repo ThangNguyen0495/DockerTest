@@ -19,7 +19,7 @@ jobs:
         run: |
           # Grant execute permission to the setup script and run it
           chmod +x ./automated_ios_test_setup.sh
-          ./automated_ios_test_setup.sh
+          ./automated_ios_test_setup.sh 
           
           # Fetch UDID of the booted simulator (first available)
           DEVICE_UDID=$(xcrun simctl list devices | grep "(Booted)" | awk -F '[()]' '{print $2}' | head -n1)
@@ -30,6 +30,7 @@ jobs:
       # Step 3: Setup tmate session for debugging (interactive session)
       - name: Setup tmate session
         run: |
+          echo "$JAVA_HOME"
           echo "iosUDID=$DEVICE_UDID" >> src/main/resources/config.properties
           mvn install -DskipTests   # Install dependencies without running tests
           mvn test -DsuiteFile=test.xml  # Run tests with a specific suite file
