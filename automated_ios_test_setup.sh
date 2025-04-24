@@ -25,9 +25,7 @@ echo -e "${RED_BOLD}[3/10] Installing Java via SDKMAN...${NC}"
 curl -s "https://get.sdkman.io" | bash
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk install java "$JAVA_VERSION"-open
-sed -i '' '/^export JAVA_HOME=/d' ~/.bashrc && echo "export JAVA_HOME=\"$HOME/.sdkman/candidates/java/22-open\"" >> ~/.bashrc
-source "$HOME"/.bashrc
-echo "$JAVA_HOME"
+sdk use java "$JAVA_VERSION"-open
 echo -e "${GREEN}Java $JAVA_VERSION installed via SDKMAN${NC}"
 
 echo -e "${RED_BOLD}[4/10] Installing Appium globally...${NC}"
