@@ -21,6 +21,9 @@ jobs:
           chmod +x ./automated_ios_test_setup.sh
           ./automated_ios_test_setup.sh 
           
+          echo "JAVA_HOME=$HOME/.sdkman/candidates/java/22-open" >> $GITHUB_ENV
+          echo "PATH="$JAVA_HOME/bin:$PATH"" >> $GITHUB_ENV
+          
           # Fetch UDID of the booted simulator (first available)
           DEVICE_UDID=$(xcrun simctl list devices | grep "(Booted)" | awk -F '[()]' '{print $2}' | head -n1)
           
